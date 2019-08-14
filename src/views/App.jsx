@@ -1,7 +1,9 @@
-import React from "react";
+import React, {Component} from "react";
 
-const App = () => (
-  <h1>Hello Hahaha</h1>
-);
+class App extends Component {
+  constructor(props){
+    super(props);
+  }
+}
 
 export default App
