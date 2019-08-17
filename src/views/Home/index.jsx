@@ -1,37 +1,50 @@
 import React, {useState} from "react";
-import Translator from "../../components/Translator";
-import {BrowserRouter as Router, Route, Link} from "react-router-dom";
+import Loadable from "react-loadable";
+import {Router, Route, Link} from "react-router-dom";
 
-import {sidebarChildItemHeight} from "./index.scss";
+import history from "../../utils/history";
 import sidebarJson from "../../data/sidebar";
+import {sidebarChildItemHeight} from "./index.scss";
+import Translator from "../../components/Translator";
+
+const User = Loadable({
+  loader: () => import("./User"),
+  loading: () => <React.Fragment/>,
+});
+
+const Department = Loadable({
+  loader: () => import("./Department"),
+  loading: () => <React.Fragment/>,
+});
 
 const SidebarItem = ({data, toggleSidebarItemCb}) => {
   const itemHeight = parseFloat(sidebarChildItemHeight);
-  const RenderBase = () => (
+  return(
     <div className="navbar-item">
       <div className="first-row">
         <p><Translator id={data.label}/></p>
         {data.child && data.isExpanded !== undefined ? (
-          <button onClick={e => toggleSidebarItemCb(data.id)}>
-            <i className="fas fa-angle-left"/>
+          <button onClick={e => toggleSidebarItemCb(data.id)} className={data.isExpanded ? "expanded" : null}>
+            <i className={data.isExpanded ? "fas fa-angle-left fas-rotated" : "fas fa-angle-left"}/>
           </button>
         ) : null}
       </div>
       {data.child && data.isExpanded !== undefined ? (
         <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
-          {data.child.map(each => <SidebarItem key={each.id} data={each}/>)}
+          {data.child.map((each, i) => {
+            if(each.path){
+              return <Link to={each.path} key={i}><SidebarItem data={each}/></Link>
+            }else{
+              return <SidebarItem data={each} key={i}/>
+            }
+          })}
         </div>
       ) : null}
     </div>
-  );
-  if(data.path){
-    return <Link to={data.path}><RenderBase/></Link>
-  }else{
-    return <RenderBase/>
-  }
+  )
 };
 
-const SidebarContent = () => {
+const SidebarContent = ({visible}) => {
   const [sidebar, setSidebar] = useState(sidebarJson);
   const updateSidebar = (objKey) => {
     const newSidebar = sidebar.map(each => {
@@ -43,9 +56,17 @@ const SidebarContent = () => {
     setSidebar(newSidebar);
   };
   return(
-    <div className="navbar-content">
-      {sidebar.map(each => {
-        return <SidebarItem key={each.id} data={each} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+    <div className={visible ? "navbar-content navbar-content-visible" : "navbar-content"}>
+      {sidebar.map((each, i) => {
+        if(each.path){
+          return(
+            <Link to={each.path}>
+              <SidebarItem key={i} data={each} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+            </Link>
+          )
+        }else{
+          return <SidebarItem key={i} data={each} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+        }
       })}
     </div>
   )
@@ -65,9 +86,13 @@ const Home = () => {
             <hr/><hr/><hr/>
           </button>
           <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
-          <SidebarContent/>
+          <SidebarContent visible={sidebarOpen}/>
         </div>
         <div className="content">
+          <Router history={history}>
+            <Route path="/user" component={User}/>
+            <Route path="/department" component={Department}/>
+          </Router>
         </div>
       </div>
     </React.Fragment>
