@@ -1,0 +1,12 @@
+{
+  "userGroup": {
+    "user": "Pengguna",
+    "list": "Daftar",
+    "createNew": "Buat baru"
+  },
+  "departmentGroup": {
+    "department": "Departemen",
+    "list": "Daftar",
+    "createNew": "Buat baru"
+  }
+}

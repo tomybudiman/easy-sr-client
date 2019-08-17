@@ -1,0 +1,34 @@
+[
+  {
+    "id": "user",
+    "label": "userGroup.user",
+    "isExpanded": false,
+    "child": [
+      {
+        "id": "list",
+        "label": "userGroup.list",
+        "path": "/user"
+      },
+      {
+        "id": "create",
+        "label": "userGroup.createNew"
+      }
+    ]
+  },
+  {
+    "id": "department",
+    "label": "departmentGroup.department",
+    "isExpanded": false,
+    "child": [
+      {
+        "id": "list",
+        "label": "departmentGroup.list",
+        "path": "/department"
+      },
+      {
+        "id": "create",
+        "label": "departmentGroup.createNew"
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "userGroup": {
+    "user": "User",
+    "list": "List",
+    "createNew": "Create new"
+  },
+  "departmentGroup": {
+    "department": "Department",
+    "list": "List",
+    "createNew": "Create new"
+  }
+}

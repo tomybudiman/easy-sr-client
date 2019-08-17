@@ -1,12 +1,32 @@
-import React, {Component} from "react";
+import React from "react";
+import Loadable from "react-loadable";
+import {Router, Route} from "react-router-dom";
+import {Provider} from "react-redux";
 
-class App extends Component {
-  constructor(props){
-    super(props);
-  }
-  render(){
-    return null
-  }
-}
+import "./app.scss";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import history from "../utils/history";
+import store from "../state";
+
+const Home = Loadable({
+  loader: () => import("./Home"),
+  loading: () => <React.Fragment/>,
+});
+
+const Auth = Loadable({
+  loader: () => import("./Auth"),
+  loading: () => <React.Fragment/>,
+});
+
+const App = () => {
+  return(
+    <Provider store={store}>
+      <Router history={history}>
+        <Route path="/" component={Home}/>
+        <Route exact path="/auth" component={Auth}/>
+      </Router>
+    </Provider>
+  )
+};
 
 export default App
