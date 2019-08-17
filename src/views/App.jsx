@@ -4,6 +4,8 @@ import {Router, Route} from "react-router-dom";
 import {Provider} from "react-redux";
 
 import "./app.scss";
+import "shards-ui/dist/css/shards.min.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import history from "../utils/history";
 import store from "../state";

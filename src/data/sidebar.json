@@ -10,7 +10,7 @@
         "path": "/user"
       },
       {
-        "id": "create",
+        "id": "createUser",
         "label": "userGroup.createNew"
       }
     ]
@@ -26,7 +26,7 @@
         "path": "/department"
       },
       {
-        "id": "create",
+        "id": "createDepartment",
         "label": "departmentGroup.createNew"
       }
     ]
