@@ -1,4 +1,4 @@
-import React from "react";
+import "react";
 import {get} from "lodash";
 
 import store from "../../state";
