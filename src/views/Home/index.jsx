@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Router, Route, Link} from "react-router-dom";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
+import useStateWithCallback from "use-state-with-callback";
 
 import history from "../../utils/history";
 import sidebarJson from "../../data/sidebar";
@@ -103,7 +104,9 @@ const HomeModal = ({homeModal, toggleModal}) => {
 
 const Home = () => {
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
-  const [sidebarOpen, setSidebarOpen] = useState(!screenMobile);
+  const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
+    document.querySelector(".sidebar").scrollTo(0, 0);
+  });
   const [homeModal, setHomeModal] = useState({state: false, id: null});
   const openHomeModal = ({data}) => {
     const allowedModalId = ["createUser", "createDepartment"];
@@ -130,6 +133,7 @@ const Home = () => {
       <HomeModal homeModal={homeModal} toggleModal={() => setHomeModal({...homeModal, state: !homeModal.state})}/>
       <div className="root">
         <div className="appbar">
+          <div/>
         </div>
         <div className="body">
           <div
@@ -145,7 +149,7 @@ const Home = () => {
             <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
             <SidebarContent visible={sidebarOpen} onClickSidebar={data => sidebarOnClickHandler(data)}/>
           </div>
-          <div className="content">
+          <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
             <div className="content-body">
               <Router history={history}>
                 <Route exact path="/user" component={User}/>
