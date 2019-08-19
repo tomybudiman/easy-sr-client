@@ -8,5 +8,10 @@
     "department": "Department",
     "list": "List",
     "createNew": "Create new"
+  },
+  "survey": {
+    "survey": "Survey",
+    "materiality": "Materiality",
+    "disclosure": "Disclosure"
   }
 }

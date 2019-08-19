@@ -1,3 +1,5 @@
+@import "../../assets/style/variables";
+
 $sidebarChildItemHeight: 48px;
 
 .root {
@@ -7,6 +9,7 @@ $sidebarChildItemHeight: 48px;
 		z-index: 1;
 		width: 100%;
 		height: 64px;
+		display: flex;
 		position: relative;
 		background-color: white;
 		box-shadow: 3px 0 30px rgba(17,31,93,.08), 2px 0 5px rgba(27,27,43,.09);
@@ -16,6 +19,21 @@ $sidebarChildItemHeight: 48px;
 		display: flex;
 		align-self: stretch;
 		height: calc(100% - 64px);
+		.overlay-dark {
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			transition-duration: 500ms;
+			background-color: rgba($darkColor,.5);
+		}
+		.overlay-dark-inactive {
+			opacity: 0;
+			visibility: hidden;
+		}
 		// Sidebar
 		$sidebarSize: 300px;
 		$sidebarMinimizeSize: 56px;
@@ -26,6 +44,7 @@ $sidebarChildItemHeight: 48px;
 			width: $sidebarSize;
 			background-color: white;
 			transition-duration: 500ms;
+			box-shadow: 3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09);
 			.sidebar-toggle {
 				right: 0;
 				padding: 0;
@@ -42,8 +61,8 @@ $sidebarChildItemHeight: 48px;
 					border: none;
 					margin: auto;
 					border-radius: 1px;
-					background-color: #5A6169;
 					transition-duration: 500ms;
+					background-color: $secondaryColor;
 				}
 				hr:nth-child(2) {
 					margin: 4px auto;
@@ -65,8 +84,8 @@ $sidebarChildItemHeight: 48px;
 				width: 100%;
 				height: 1px;
 				border: none;
-				background-color: #E9ECEF;
 				transition-duration: 500ms;
+				background-color: $lightColor;
 				margin: $sidebarMinimizeSize 0 0 0;
 			}
 			.navbar-content {
@@ -86,11 +105,11 @@ $sidebarChildItemHeight: 48px;
 						justify-content: space-between;
 						p {
 							margin: 0;
-							color: #5A6169;
 							font-size: 18px;
 							letter-spacing: 1px;
 							white-space: nowrap;
 							font-weight: lighter;
+							color: $secondaryColor;
 						}
 						button {
 							width: 24px;
@@ -104,7 +123,7 @@ $sidebarChildItemHeight: 48px;
 							transition-duration: 250ms;
 							background-color: transparent;
 							&:hover, &:active {
-								background-color: #E9ECEF;
+								background-color: $lightColor;
 							}
 							.fa-angle-left {
 								transition-duration: 500ms;
@@ -114,14 +133,14 @@ $sidebarChildItemHeight: 48px;
 							}
 						}
 						.expanded {
-							background-color: #E9ECEF;
+							background-color: $lightColor;
 						}
 					}
 					.child-item {
 						height: 0;
 						overflow: hidden;
 						padding-left: 16px;
-						background-color: #E9ECEF;
+						background-color: $lightColor;
 						transition-duration: 500ms;
 						.navbar-item .first-row {
 							height: $sidebarChildItemHeight;
@@ -148,7 +167,39 @@ $sidebarChildItemHeight: 48px;
 			height: 100%;
 			flex-grow: 1;
 			padding: 16px;
+			display: flex;
 			box-sizing: border-box;
+			flex-direction: column;
+			.content-body {
+				flex-grow: 1;
+				margin-bottom: 16px;
+			}
+			.body-footer-card {
+				padding: 16px;
+				display: flex;
+				border-radius: 4px;
+				box-sizing: border-box;
+				background-color: white;
+				justify-content: space-between;
+				.copyright-text {
+					margin: 0;
+					font-size: 14px;
+					font-weight: bold;
+					letter-spacing: 1px;
+					color: $secondaryColor;
+				}
+			}
+		}
+		@media screen and (max-width: $maxMobileSize) {
+			.sidebar {
+				position: absolute;
+			}
+			.content {
+				padding-left: 16px + $sidebarMinimizeSize;
+				.body-footer-card .copyright-text {
+					font-size: 12px;
+				}
+			}
 		}
 	}
 }

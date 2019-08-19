@@ -5,7 +5,7 @@
     "isExpanded": false,
     "child": [
       {
-        "id": "list",
+        "id": "listUser",
         "label": "userGroup.list",
         "path": "/user"
       },
@@ -21,13 +21,30 @@
     "isExpanded": false,
     "child": [
       {
-        "id": "list",
+        "id": "listDepartment",
         "label": "departmentGroup.list",
         "path": "/department"
       },
       {
         "id": "createDepartment",
         "label": "departmentGroup.createNew"
+      }
+    ]
+  },
+  {
+    "id": "survey",
+    "label": "survey.survey",
+    "isExpanded": false,
+    "child": [
+      {
+        "id": "materiality",
+        "label": "survey.materiality",
+        "path": "/survey/materiality"
+      },
+      {
+        "id": "disclosure",
+        "label": "survey.disclosure",
+        "path": "/survey/disclosure"
       }
     ]
   }

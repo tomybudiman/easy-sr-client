@@ -8,5 +8,10 @@
     "department": "Departemen",
     "list": "Daftar",
     "createNew": "Buat baru"
+  },
+  "survey": {
+    "survey": "Survei",
+    "materiality": "Materiality",
+    "disclosure": "Disclosure"
   }
 }

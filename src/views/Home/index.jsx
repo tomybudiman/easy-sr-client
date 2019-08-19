@@ -18,6 +18,16 @@ const Department = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+const SurveyMateriality = Loadable({
+  loader: () => import("./SurveyMateriality"),
+  loading: () => <React.Fragment/>,
+});
+
+const SurveyDisclosure = Loadable({
+  loader: () => import("./SurveyDisclosure"),
+  loading: () => <React.Fragment/>,
+});
+
 const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
   const itemHeight = parseFloat(sidebarChildItemHeight);
   return(
@@ -38,7 +48,7 @@ const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
         <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
           {data.child.map((each, i) => {
             if(each.path){
-              return <Link to={each.path} key={i}><SidebarItem data={each}/></Link>
+              return <Link to={each.path} key={i} onClick={e => onClick({e, data: each})}><SidebarItem data={each}/></Link>
             }else{
               return <SidebarItem data={each} key={i} onClick={e => onClick({e: e.e, data: each})}/>
             }
@@ -66,7 +76,7 @@ const SidebarContent = ({visible, onClickSidebar}) => {
         if(each.path){
           return(
             <Link to={each.path}>
-              <SidebarItem key={i} data={each} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+              <SidebarItem key={i} data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
             </Link>
           )
         }else{
@@ -74,7 +84,7 @@ const SidebarContent = ({visible, onClickSidebar}) => {
             <SidebarItem
               key={i}
               data={each}
-              onClick={e => onClickSidebar(e.data.id)}
+              onClick={e => onClickSidebar(e)}
               toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
           )
         }
@@ -92,20 +102,39 @@ const HomeModal = ({homeModal, toggleModal}) => {
 };
 
 const Home = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
+  const [sidebarOpen, setSidebarOpen] = useState(!screenMobile);
   const [homeModal, setHomeModal] = useState({state: false, id: null});
-  const openHomeModal = (id) => {
+  const openHomeModal = ({data}) => {
     const allowedModalId = ["createUser", "createDepartment"];
-    if(allowedModalId.includes(id)){
-      setHomeModal({state: true, id});
+    if(allowedModalId.includes(data.id)){
+      setHomeModal({state: true, id: data.id});
     }
   };
+  const sidebarOnClickHandler = (data) => {
+    const closeModalScopeId = ["listUser", "createUser", "listDepartment", "createDepartment", "materiality", "disclosure"];
+    openHomeModal(data);
+    if(closeModalScopeId.includes(data.data.id) && screenMobile){
+      setSidebarOpen(!sidebarOpen);
+    }
+  };
+  // Window Resize Event
+  window.addEventListener("resize", e => {
+    setScreenMobile(window.innerWidth <= 768);
+    if(sidebarOpen){
+      setSidebarOpen(window.innerWidth > 768);
+    }
+  });
   return(
     <React.Fragment>
       <HomeModal homeModal={homeModal} toggleModal={() => setHomeModal({...homeModal, state: !homeModal.state})}/>
       <div className="root">
-        <div className="appbar"></div>
+        <div className="appbar">
+        </div>
         <div className="body">
+          <div
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className={screenMobile && sidebarOpen ? "overlay-dark" : "overlay-dark overlay-dark-inactive"}/>
           <div className={sidebarOpen ? "sidebar" : "sidebar sidebar-inactive"}>
             <button
               title={sidebarOpen ? "Minimize" : "Open"}
@@ -114,13 +143,21 @@ const Home = () => {
               <hr/><hr/><hr/>
             </button>
             <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
-            <SidebarContent visible={sidebarOpen} onClickSidebar={id => openHomeModal(id)}/>
+            <SidebarContent visible={sidebarOpen} onClickSidebar={data => sidebarOnClickHandler(data)}/>
           </div>
           <div className="content">
-            <Router history={history}>
-              <Route path="/user" component={User}/>
-              <Route path="/department" component={Department}/>
-            </Router>
+            <div className="content-body">
+              <Router history={history}>
+                <Route exact path="/user" component={User}/>
+                <Route exact path="/department" component={Department}/>
+                <Route exact path="/survey/materiality" component={SurveyMateriality}/>
+                <Route exact path="/survey/disclosure" component={SurveyDisclosure}/>
+              </Router>
+            </div>
+            <div className="body-footer-card">
+              <div></div>
+              <p className="copyright-text">Brand &copy; {new Date().getFullYear()} All Rights Reserved</p>
+            </div>
           </div>
         </div>
       </div>
