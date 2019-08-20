@@ -97,12 +97,15 @@ const SidebarContent = ({visible, onClickSidebar}) => {
 };
 
 const HomeModal = ({homeModal, toggleModal}) => {
+  const [modalSize, setModalSize] = useState("md");
   const RenderComponent = () => {
     switch(homeModal.id){
       case "createUser":
+        setModalSize("sm");
         const {CreateUserModal} = require("./User");
         return <CreateUserModal/>
       case "createDepartment":
+        setModalSize("sm");
         const {CreateDepartmentModal} = require("./Department");
         return <CreateDepartmentModal/>
       default:
@@ -110,7 +113,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
     }
   }
   return(
-    <Modal open={homeModal.state} toggle={toggleModal} className="home-modal">
+    <Modal open={homeModal.state} toggle={toggleModal} className="home-modal" size={modalSize}>
       <RenderComponent/>
     </Modal>
   )
