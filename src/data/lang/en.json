@@ -2,7 +2,8 @@
   "userGroup": {
     "user": "User",
     "list": "List",
-    "createNew": "Create new"
+    "createNew": "Create new",
+    "createNewUser": "Create new user"
   },
   "departmentGroup": {
     "department": "Department",

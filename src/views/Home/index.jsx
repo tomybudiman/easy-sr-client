@@ -9,6 +9,7 @@ import sidebarJson from "../../data/sidebar";
 import {sidebarChildItemHeight} from "./index.scss";
 import Translator from "../../components/Translator";
 
+// Import Components
 const User = Loadable({
   loader: () => import("./User"),
   loading: () => <React.Fragment/>,
@@ -29,6 +30,7 @@ const SurveyDisclosure = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+// Core Components
 const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
   const itemHeight = parseFloat(sidebarChildItemHeight);
   return(
@@ -95,9 +97,21 @@ const SidebarContent = ({visible, onClickSidebar}) => {
 };
 
 const HomeModal = ({homeModal, toggleModal}) => {
+  const RenderComponent = () => {
+    switch(homeModal.id){
+      case "createUser":
+        const {CreateUserModal} = require("./User");
+        return <CreateUserModal/>
+      case "createDepartment":
+        const {CreateDepartmentModal} = require("./Department");
+        return <CreateDepartmentModal/>
+      default:
+        return null
+    }
+  }
   return(
-    <Modal open={homeModal.state} toggle={toggleModal}>
-      {homeModal.id}
+    <Modal open={homeModal.state} toggle={toggleModal} className="home-modal">
+      <RenderComponent/>
     </Modal>
   )
 };
@@ -133,7 +147,20 @@ const Home = () => {
       <HomeModal homeModal={homeModal} toggleModal={() => setHomeModal({...homeModal, state: !homeModal.state})}/>
       <div className="root">
         <div className="appbar">
-          <div/>
+          <div className="user-loggedin" tabIndex="-1">
+            <div className="selector-container">
+              <div className="user-logo-text">
+                <p>TB</p>
+              </div>
+              <div className="user-identity" onClick={() => console.log('ok')}>
+                <p>Tomy Budiman</p>
+                <button>
+                  <i className="fas fa-angle-down"/>
+                </button>
+              </div>
+            </div>
+            <div className="user-loggedin-dialog"></div>
+          </div>
         </div>
         <div className="body">
           <div
