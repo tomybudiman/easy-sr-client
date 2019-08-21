@@ -1,7 +1,14 @@
 {
+  "commonGroup": {
+    "language": "Bahasa",
+    "allRightsReserved": "Hak Cipta Dilindungi"
+  },
   "userGroup": {
     "user": "Pengguna",
     "list": "Daftar",
+    "email": "Email",
+    "role": "Peranan",
+    "fullname": "Nama Lengkap",
     "createNew": "Buat baru",
     "createNewUser": "Buat pengguna baru"
   },

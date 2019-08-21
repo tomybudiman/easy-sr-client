@@ -2,6 +2,7 @@
   {
     "id": "user",
     "label": "userGroup.user",
+    "iconClassname": "far fa-user",
     "isExpanded": false,
     "child": [
       {
@@ -18,6 +19,7 @@
   {
     "id": "department",
     "label": "departmentGroup.department",
+    "iconClassname": "far fa-user-circle",
     "isExpanded": false,
     "child": [
       {
@@ -34,6 +36,7 @@
   {
     "id": "survey",
     "label": "survey.survey",
+    "iconClassname": "fas fa-poll",
     "isExpanded": false,
     "child": [
       {

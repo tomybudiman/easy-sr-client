@@ -1,6 +1,6 @@
 import React from "react";
 import Loadable from "react-loadable";
-import {Router, Route} from "react-router-dom";
+import {Router, Route, Redirect, Switch} from "react-router-dom";
 import {Provider} from "react-redux";
 
 import "./app.scss";
@@ -24,8 +24,13 @@ const App = () => {
   return(
     <Provider store={store}>
       <Router history={history}>
-        <Route path="/" component={Home}/>
-        <Route exact path="/auth" component={Auth}/>
+        <Switch>
+          <Route exact path="/" render={() => (
+            <Redirect to="/dashboard"/>
+          )}/>
+          <Route path="/dashboard" component={Home}/>
+          <Route exact path="/auth" component={Auth}/>
+        </Switch>
       </Router>
     </Provider>
   )

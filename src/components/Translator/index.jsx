@@ -1,4 +1,4 @@
-import "react";
+import {useState} from "react";
 import {get} from "lodash";
 
 import store from "../../state";
@@ -8,8 +8,11 @@ import en from "../../data/lang/en";
 const localeData = {id, en};
 
 const Translator = ({id}) => {
-  const {locale} = store.getState().reducerLocale;
-  return get(localeData[locale], id) || id;
+  const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
+  store.subscribe(() => {
+    setActiveLocale(store.getState().reducerLocale.locale);
+  });
+  return get(localeData[activeLocale], id) || id;
 };
 
 export default Translator

@@ -1,7 +1,14 @@
 {
+  "commonGroup": {
+    "language": "Language",
+    "allRightsReserved": "All Rights Reserved"
+  },
   "userGroup": {
     "user": "User",
     "list": "List",
+    "email": "Email",
+    "role": "Role",
+    "fullname": "Full name",
     "createNew": "Create new",
     "createNewUser": "Create new user"
   },

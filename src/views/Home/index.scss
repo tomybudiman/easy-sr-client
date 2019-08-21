@@ -202,6 +202,9 @@ $sidebarChildItemHeight: 48px;
 							white-space: nowrap;
 							font-weight: lighter;
 							color: $secondaryColor;
+							i {
+								margin-right: 8px;
+							}
 						}
 						button {
 							width: 24px;
@@ -269,12 +272,27 @@ $sidebarChildItemHeight: 48px;
 				margin-bottom: 16px;
 			}
 			.body-footer-card {
-				padding: 16px;
 				display: flex;
+				padding: 16px 24px;
 				border-radius: 4px;
 				box-sizing: border-box;
 				background-color: white;
 				justify-content: space-between;
+				.lang-switcher {
+					display: flex;
+					flex-wrap: nowrap;
+					color: $secondaryColor;
+					.separator {
+						margin: 0 4px;
+					}
+					.current-locale {
+						font-weight: bold;
+					}
+					p {
+						margin: 0;
+						cursor: pointer;
+					}
+				}
 				.copyright-text {
 					margin: 0;
 					font-size: 14px;

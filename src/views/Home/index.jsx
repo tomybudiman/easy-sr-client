@@ -1,11 +1,13 @@
 import React, {useState} from "react";
-import {Router, Route, Link} from "react-router-dom";
+import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
 import useStateWithCallback from "use-state-with-callback";
 
+import store from "../../state";
 import history from "../../utils/history";
 import sidebarJson from "../../data/sidebar";
+import {changeLocale} from "../../state/actions";
 import {sidebarChildItemHeight} from "./index.scss";
 import Translator from "../../components/Translator";
 
@@ -30,6 +32,8 @@ const SurveyDisclosure = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+const rootRoute = history.location.pathname.match(/^\/[^\/]+/)[0];
+
 // Core Components
 const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
   const itemHeight = parseFloat(sidebarChildItemHeight);
@@ -40,7 +44,10 @@ const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
           onClick({e, data});
         }
       }}>
-        <p><Translator id={data.label}/></p>
+        <p>
+          {data.iconClassname ? <i className={data.iconClassname}/> : null}
+          <Translator id={data.label}/>
+        </p>
         {data.child && data.isExpanded !== undefined ? (
           <button onClick={e => toggleSidebarItemCb(data.id)} className={data.isExpanded ? "expanded" : null}>
             <i className={data.isExpanded ? "fas fa-angle-left fas-rotated" : "fas fa-angle-left"}/>
@@ -51,7 +58,11 @@ const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
         <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
           {data.child.map((each, i) => {
             if(each.path){
-              return <Link to={each.path} key={i} onClick={e => onClick({e, data: each})}><SidebarItem data={each}/></Link>
+              return (
+                <Link to={rootRoute+each.path} key={i} onClick={e => onClick({e, data: each})}>
+                  <SidebarItem data={each}/>
+                </Link>
+              )
             }else{
               return <SidebarItem data={each} key={i} onClick={e => onClick({e: e.e, data: each})}/>
             }
@@ -78,7 +89,7 @@ const SidebarContent = ({visible, onClickSidebar}) => {
       {sidebar.map((each, i) => {
         if(each.path){
           return(
-            <Link to={each.path}>
+            <Link to={rootRoute+each.path}>
               <SidebarItem key={i} data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
             </Link>
           )
@@ -101,7 +112,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
   const RenderComponent = () => {
     switch(homeModal.id){
       case "createUser":
-        setModalSize("sm");
+        setModalSize("md");
         const {CreateUserModal} = require("./User");
         return <CreateUserModal/>
       case "createDepartment":
@@ -120,6 +131,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
 };
 
 const Home = () => {
+  const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
     document.querySelector(".sidebar").scrollTo(0, 0);
@@ -138,6 +150,9 @@ const Home = () => {
       setSidebarOpen(!sidebarOpen);
     }
   };
+  store.subscribe(() => {
+    setActiveLocale(store.getState().reducerLocale.locale);
+  });
   // Window Resize Event
   window.addEventListener("resize", e => {
     setScreenMobile(window.innerWidth <= 768);
@@ -182,15 +197,28 @@ const Home = () => {
           <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
             <div className="content-body">
               <Router history={history}>
-                <Route exact path="/user" component={User}/>
-                <Route exact path="/department" component={Department}/>
-                <Route exact path="/survey/materiality" component={SurveyMateriality}/>
-                <Route exact path="/survey/disclosure" component={SurveyDisclosure}/>
+                <Switch>
+                  <Route exact path={`${rootRoute}/user`} component={User}/>
+                  <Route exact path={`${rootRoute}/department`} component={Department}/>
+                  <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
+                  <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
+                  <Route render={() => <Redirect to={rootRoute}/>}/>
+                </Switch>
               </Router>
             </div>
             <div className="body-footer-card">
-              <div></div>
-              <p className="copyright-text">Brand &copy; {new Date().getFullYear()} All Rights Reserved</p>
+              <div className="lang-switcher">
+                <p
+                  className={activeLocale === "id" ? "current-locale" : null}
+                  onClick={() => store.dispatch(changeLocale("id"))}>ID</p>
+                <span className="separator">&bull;</span>
+                <p
+                  className={activeLocale === "en" ? "current-locale" : null}
+                  onClick={() => store.dispatch(changeLocale("en"))}>EN</p>
+              </div>
+              <p className="copyright-text">
+                Brand &copy; {new Date().getFullYear()} <Translator id="commonGroup.allRightsReserved"/>
+              </p>
             </div>
           </div>
         </div>
