@@ -1,5 +1,8 @@
 {
   "commonGroup": {
+    "save": "Save",
+    "create": "Create",
+    "add": "Add",
     "language": "Language",
     "allRightsReserved": "All Rights Reserved"
   },
@@ -13,6 +16,7 @@
     "createNewUser": "Create new user"
   },
   "departmentGroup": {
+    "selectDepartment": "Select department",
     "department": "Department",
     "list": "List",
     "createNew": "Create new"

@@ -1,5 +1,8 @@
 {
   "commonGroup": {
+    "save": "Simpan",
+    "create": "Buat",
+    "add": "Tambah",
     "language": "Bahasa",
     "allRightsReserved": "Hak Cipta Dilindungi"
   },
@@ -13,6 +16,7 @@
     "createNewUser": "Buat pengguna baru"
   },
   "departmentGroup": {
+    "selectDepartment": "Pilih departemen",
     "department": "Departemen",
     "list": "Daftar",
     "createNew": "Buat baru"
