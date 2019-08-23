@@ -9,6 +9,7 @@ import {
   FormCheckbox,
   Button
 } from "shards-react";
+import {isEmpty} from "lodash/core";
 
 import Translator from "../../../components/Translator";
 
@@ -37,7 +38,7 @@ export const CreateUserModal = () => {
   const updateFormField = (data, id) => {
     switch(id){
       case "fullname":
-        updateFormStatus({...formStatus, fullname: {value: data, invalid: data === ""}});
+        updateFormStatus({...formStatus, fullname: {value: data, invalid: isEmpty(data)}});
         break;
       case "email":
         const mailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
@@ -47,6 +48,7 @@ export const CreateUserModal = () => {
         updateFormStatus({...formStatus, department: {value: data, invalid: data === "default"}});
         break;
       case "role":
+        updateFormStatus({...formStatus, role: {value: data, invalid: isEmpty(data)}});
         break;
       default:
         break;
@@ -54,7 +56,7 @@ export const CreateUserModal = () => {
   };
   const checkFormThenSubmit = () => {
     let tempFormStatus = {...formStatus};
-    Object.keys(tempFormStatus).filter(eachKey => {
+    const filterErrorform = Object.keys(tempFormStatus).filter(eachKey => {
       tempFormStatus = {
         ...tempFormStatus,
         [eachKey]: {
@@ -62,8 +64,14 @@ export const CreateUserModal = () => {
           invalid: tempFormStatus[eachKey].value === null
         }
       };
+      if(isEmpty(tempFormStatus[eachKey].value) || tempFormStatus[eachKey].invalid){
+        return eachKey
+      }
     });
     updateFormStatus(tempFormStatus);
+    if(filterErrorform.length === 0){
+      // Submit create new user form
+    }
   };
   return(
     <React.Fragment>
