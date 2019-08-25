@@ -1,7 +1,14 @@
-import "react";
+import React from "react";
+
+import Translator from "../../../components/Translator";
+import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const Disclosure = () => {
-  return "Disclosure page"
+  return(
+    <PageRouteHeader>
+      <Translator id="surveyGroup.disclosureSurvey"/>
+    </PageRouteHeader>
+  )
 };
 
 export default Disclosure

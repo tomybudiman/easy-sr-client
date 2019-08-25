@@ -21,9 +21,11 @@
     "list": "Daftar",
     "createNew": "Buat baru"
   },
-  "survey": {
+  "surveyGroup": {
     "survey": "Survei",
     "materiality": "Materiality",
-    "disclosure": "Disclosure"
+    "disclosure": "Disclosure",
+    "materialitySurvey": "Materiality Survei",
+    "disclosureSurvey": "Disclosure Survei"
   }
 }

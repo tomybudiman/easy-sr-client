@@ -35,18 +35,18 @@
   },
   {
     "id": "survey",
-    "label": "survey.survey",
+    "label": "surveyGroup.survey",
     "iconClassname": "fas fa-poll",
     "isExpanded": false,
     "child": [
       {
         "id": "materiality",
-        "label": "survey.materiality",
+        "label": "surveyGroup.materiality",
         "path": "/survey/materiality"
       },
       {
         "id": "disclosure",
-        "label": "survey.disclosure",
+        "label": "surveyGroup.disclosure",
         "path": "/survey/disclosure"
       }
     ]

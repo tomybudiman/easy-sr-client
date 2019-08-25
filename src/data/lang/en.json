@@ -21,9 +21,11 @@
     "list": "List",
     "createNew": "Create new"
   },
-  "survey": {
+  "surveyGroup": {
     "survey": "Survey",
     "materiality": "Materiality",
-    "disclosure": "Disclosure"
+    "disclosure": "Disclosure",
+    "materialitySurvey": "Materiality Survey",
+    "disclosureSurvey": "Disclosure Survey"
   }
 }

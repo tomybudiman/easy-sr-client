@@ -12,9 +12,14 @@ import {
 import {isEmpty} from "lodash/core";
 
 import Translator from "../../../components/Translator";
+import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const User = () => {
-  return "User page"
+  return(
+    <PageRouteHeader>
+      <Translator id="userGroup.user"/>
+    </PageRouteHeader>
+  )
 };
 
 export const CreateUserModal = () => {

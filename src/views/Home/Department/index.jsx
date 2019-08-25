@@ -1,7 +1,14 @@
-import "react";
+import React from "react";
+
+import Translator from "../../../components/Translator";
+import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const Department = () => {
-  return "Department page"
+  return(
+    <PageRouteHeader>
+      <Translator id="departmentGroup.department"/>
+    </PageRouteHeader>
+  )
 };
 
 export const CreateDepartmentModal = () => {

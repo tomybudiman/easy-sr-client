@@ -1,7 +1,14 @@
-import "react";
+import React from "react";
+
+import Translator from "../../../components/Translator";
+import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const Materiality = () => {
-  return "Materiality page"
+  return(
+    <PageRouteHeader>
+      <Translator id="surveyGroup.materialitySurvey"/>
+    </PageRouteHeader>
+  )
 };
 
 export default Materiality

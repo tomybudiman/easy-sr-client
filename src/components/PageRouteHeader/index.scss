@@ -1,0 +1,44 @@
+@import "../../assets/style/variables";
+
+.page-route-header {
+	display: flex;
+	padding: 0 16px;
+	.page-title {
+		flex-grow: 1;
+		font-size: 48px;
+		letter-spacing: 1px;
+		color: $secondaryColor;
+	}
+	.page-route {
+		font-size: 20px;
+		align-self: center;
+		letter-spacing: 1px;
+		color: $secondaryColor;
+		p, span {
+			margin: 0;
+			display: inline-block;
+		}
+		span {
+			margin: 0 8px;
+		}
+	}
+}
+
+@media screen and (max-width: $maxMobileSize) {
+	.page-route-header {
+		padding: 0 8px;
+		flex-direction: column;
+		.page-title, .page-route {
+			width: 100%;
+		}
+		.page-title {
+			font-size: 40px;
+		}
+		.page-route {
+			font-size: 16px;
+			span {
+				margin: 0 4px;
+			}
+		}
+	}
+}
