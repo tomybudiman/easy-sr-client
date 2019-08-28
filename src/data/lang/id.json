@@ -11,15 +11,17 @@
     "list": "Daftar",
     "email": "Email",
     "role": "Peranan",
+    "userList": "Daftar Pengguna",
     "fullname": "Nama Lengkap",
-    "createNew": "Buat baru",
-    "createNewUser": "Buat pengguna baru"
+    "createNew": "Buat Baru",
+    "createNewUser": "Buat Pengguna Baru"
   },
   "departmentGroup": {
     "selectDepartment": "Pilih departemen",
     "department": "Departemen",
     "list": "Daftar",
-    "createNew": "Buat baru"
+    "createNew": "Buat Baru",
+    "createNewDepartment": "Buat Department Baru"
   },
   "surveyGroup": {
     "survey": "Survei",

@@ -20,18 +20,7 @@
     "id": "department",
     "label": "departmentGroup.department",
     "iconClassname": "far fa-user-circle",
-    "isExpanded": false,
-    "child": [
-      {
-        "id": "listDepartment",
-        "label": "departmentGroup.list",
-        "path": "/department"
-      },
-      {
-        "id": "createDepartment",
-        "label": "departmentGroup.createNew"
-      }
-    ]
+    "path": "/department"
   },
   {
     "id": "survey",

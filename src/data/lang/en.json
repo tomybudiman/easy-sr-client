@@ -11,15 +11,17 @@
     "list": "List",
     "email": "Email",
     "role": "Role",
-    "fullname": "Full name",
-    "createNew": "Create new",
-    "createNewUser": "Create new user"
+    "userList": "User List",
+    "fullname": "Full Name",
+    "createNew": "Create New",
+    "createNewUser": "Create New User"
   },
   "departmentGroup": {
     "selectDepartment": "Select department",
     "department": "Department",
     "list": "List",
-    "createNew": "Create new"
+    "createNew": "Create New",
+    "createNewDepartment": "Create New Department"
   },
   "surveyGroup": {
     "survey": "Survey",

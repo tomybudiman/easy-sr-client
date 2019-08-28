@@ -1,24 +1,63 @@
 import React, {useState} from "react";
+import moment from "moment";
 import {
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  FormGroup,
-  FormInput,
-  FormSelect,
-  FormCheckbox,
-  Button
+  ModalBody, ModalHeader, ModalFooter, FormGroup, FormInput, FormSelect, FormCheckbox, Button as ButtonStrap
 } from "shards-react";
+import MaterialTable, {MTableToolbar} from "material-table";
+import Button from "@material-ui/core/Button";
 import {isEmpty} from "lodash/core";
 
 import Translator from "../../../components/Translator";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
-const User = () => {
+const User = ({onClickEvent}) => {
+  const [selectedUser, setSelectedUser] = useState(null);
+  const tableStyle = {
+    marginTop: "16px",
+    boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
+  };
+  const tableOptions = {
+    showTitle: false
+  };
+  const tableColumns = [
+    {title: "Fullname", field: "fullname"},
+    {title: "Email", field: "email"},
+    {title: "Roles", render: ({roles}) => roles.join(", ")},
+    {title: "Department", field: "department"},
+    {title: "Created At", field: "createdAt"},
+    {title: "Actions", render: rowData => (
+      <Button className="datatable-action-button" onClick={() => setSelectedUser(rowData)}>
+        <i className="fas fa-user-cog"/>
+      </Button>
+    )}
+  ];
+  const tableComponents = {
+    Toolbar: props => (
+      <React.Fragment>
+        <MTableToolbar {...props}/>
+        <div className="user-datatable-toolbar">
+          <Button size="small" onClick={e => onClickEvent({e, data: {id: "createUser"}})}>
+            <Translator id="userGroup.createNewUser"/>
+          </Button>
+        </div>
+      </React.Fragment>
+    )
+  };
+  const data = [
+    {fullname: "Tomy Budiman", email: "tomy.budiman@acuralabs.ai", roles: ["disclosure_user", "materiality_surveyor"], department: "Whatever", createdAt: moment().toISOString()}
+  ];
   return(
-    <PageRouteHeader>
-      <Translator id="userGroup.user"/>
-    </PageRouteHeader>
+    <React.Fragment>
+      <PageRouteHeader>
+        <Translator id="userGroup.user"/>
+      </PageRouteHeader>
+      <MaterialTable
+        data={data}
+        style={tableStyle}
+        columns={tableColumns}
+        options={tableOptions}
+        components={tableComponents}/>
+    </React.Fragment>
   )
 };
 
@@ -139,9 +178,9 @@ export const CreateUserModal = () => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button className="custom-button" onClick={() => checkFormThenSubmit()}>
+        <ButtonStrap className="custom-button" onClick={() => checkFormThenSubmit()}>
           <Translator id="commonGroup.save"/>
-        </Button>
+        </ButtonStrap>
       </ModalFooter>
     </React.Fragment>
   )

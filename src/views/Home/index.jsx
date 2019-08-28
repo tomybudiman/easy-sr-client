@@ -89,8 +89,8 @@ const SidebarContent = ({visible, onClickSidebar}) => {
       {sidebar.map((each, i) => {
         if(each.path){
           return(
-            <Link to={rootRoute+each.path}>
-              <SidebarItem key={i} data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+            <Link to={rootRoute+each.path} key={i}>
+              <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
             </Link>
           )
         }else{
@@ -143,7 +143,7 @@ const Home = () => {
       setHomeModal({state: true, id: data.id});
     }
   };
-  const sidebarOnClickHandler = (data) => {
+  const sidebarOnClickHandler = data => {
     const closeModalScopeId = ["listUser", "createUser", "listDepartment", "createDepartment", "materiality", "disclosure"];
     openHomeModal(data);
     if(closeModalScopeId.includes(data.data.id) && screenMobile){
@@ -198,8 +198,8 @@ const Home = () => {
             <div className="content-body">
               <Router history={history}>
                 <Switch>
-                  <Route exact path={`${rootRoute}/user`} component={User}/>
-                  <Route exact path={`${rootRoute}/department`} component={Department}/>
+                  <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal}/>}/>
+                  <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal}/>}/>
                   <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
                   <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
                   <Route render={() => <Redirect to={rootRoute}/>}/>

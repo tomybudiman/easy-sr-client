@@ -9,6 +9,18 @@
 		letter-spacing: 1px;
 		font-family: "Roboto", sans-serif;
 	}
+	.custom-card-box-shadow {
+		box-shadow: 3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09);
+	}
+}
+
+@mixin material-datatable-components {
+	.datatable-action-button {
+		width: 32px;
+		height: 32px;
+		min-width: 0;
+		color: $secondaryColor;
+	}
 }
 
 * {
@@ -24,6 +36,7 @@ html, body, #root {
 	flex-wrap: wrap;
 	background-color: $lightColorSecondary;
 	@include custom-shards-component-style;
+	@include material-datatable-components;
 	.modal {
 		overflow: auto;
 	}

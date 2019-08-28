@@ -1,11 +1,8 @@
 @import "../../assets/style/variables";
 @import "User/index";
+@import "Department/index";
 
 $sidebarChildItemHeight: 48px;
-
-.home-modal {
-	@include createUserModal;
-}
 
 .root {
 	width: 100%;
@@ -124,7 +121,7 @@ $sidebarChildItemHeight: 48px;
 			visibility: hidden;
 		}
 		// Sidebar
-		$sidebarSize: 300px;
+		$sidebarSize: 250px;
 		$sidebarMinimizeSize: 56px;
 		.sidebar {
 			z-index: 1;
@@ -135,6 +132,7 @@ $sidebarChildItemHeight: 48px;
 			width: $sidebarSize;
 			padding-bottom: 32px;
 			box-sizing: border-box;
+			min-width: $sidebarSize;
 			background-color: white;
 			transition-duration: 500ms;
 			box-shadow: 3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09);
@@ -187,18 +185,19 @@ $sidebarChildItemHeight: 48px;
 				visibility: hidden;
 				transition-duration: 250ms;
 				.navbar-item {
+					transition-duration: 150ms;
 					.first-row {
-						height: 56px;
 						display: flex;
 						padding: 0 16px;
 						cursor: pointer;
 						flex-wrap: nowrap;
 						align-items: center;
 						box-sizing: border-box;
+						height: $sidebarMinimizeSize;
 						justify-content: space-between;
 						p {
 							margin: 0;
-							font-size: 18px;
+							font-size: 16px;
 							letter-spacing: 1px;
 							white-space: nowrap;
 							font-weight: lighter;
@@ -256,6 +255,7 @@ $sidebarChildItemHeight: 48px;
 			}
 		}
 		.sidebar-inactive {
+			min-width: 0;
 			overflow: hidden;
 			width: $sidebarMinimizeSize;
 		}
@@ -263,8 +263,9 @@ $sidebarChildItemHeight: 48px;
 		.content {
 			height: 100%;
 			flex-grow: 1;
-			padding: 16px;
 			display: flex;
+			overflow: auto;
+			padding: 16px 24px;
 			box-sizing: border-box;
 			flex-direction: column;
 			transition-duration: 500ms;
