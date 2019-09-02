@@ -114,15 +114,15 @@ const HomeModal = ({homeModal, toggleModal}) => {
       case "createUser":
         setModalSize("md");
         const {CreateUserModal} = require("./User");
-        return <CreateUserModal/>
+        return <CreateUserModal onClickClose={toggleModal}/>;
       case "createDepartment":
-        setModalSize("sm");
+        setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
-        return <CreateDepartmentModal/>
+        return <CreateDepartmentModal onClickClose={toggleModal}/>;
       default:
         return null
     }
-  }
+  };
   return(
     <Modal open={homeModal.state} toggle={toggleModal} className="home-modal" size={modalSize}>
       <RenderComponent/>

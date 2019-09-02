@@ -61,7 +61,7 @@ const User = ({onClickEvent}) => {
   )
 };
 
-export const CreateUserModal = () => {
+export const CreateUserModal = ({onClickClose}) => {
   const [roleCheckbox, setRoleCheckbox] = useState({
     disclosure: false,
     materiality: false,
@@ -119,10 +119,13 @@ export const CreateUserModal = () => {
   };
   return(
     <React.Fragment>
-      <ModalHeader>
+      <ModalHeader className="home-modal-header" tag="div">
         <Translator id="userGroup.createNewUser"/>
+        <button className="close-button" onClick={onClickClose}>
+          <i className="fas fa-times"/>
+        </button>
       </ModalHeader>
-      <ModalBody className="create-user-modal-body">
+      <ModalBody>
         <FormGroup className="input-new-user-fullname">
           <label htmlFor="input-new-user-fullname">
             <Translator id="userGroup.fullname"/>

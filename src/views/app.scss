@@ -23,6 +23,24 @@
 	}
 }
 
+@mixin custom-modal-style {
+	.home-modal .home-modal-header .modal-title {
+		width: 100%;
+		display: flex;
+		font-size: 24px;
+		align-items: center;
+		justify-content: space-between;
+		.close-button {
+			padding: 0;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			color: $secondaryColor;
+			background-color: transparent;
+		}
+	}
+}
+
 * {
 	text-decoration: none !important;
 	font-family: "Roboto", sans-serif;
@@ -37,6 +55,7 @@ html, body, #root {
 	background-color: $lightColorSecondary;
 	@include custom-shards-component-style;
 	@include material-datatable-components;
+	@include custom-modal-style;
 	.modal {
 		overflow: auto;
 	}

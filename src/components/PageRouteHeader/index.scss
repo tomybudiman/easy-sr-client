@@ -24,7 +24,7 @@
 	}
 }
 
-@media screen and (max-width: $maxMobileSize) {
+@media screen and (max-width: $maxTabletSize) {
 	.page-route-header {
 		padding: 0 8px;
 		flex-direction: column;

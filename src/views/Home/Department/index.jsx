@@ -1,9 +1,10 @@
 import React from "react";
+import {FormGroup, FormInput, ModalBody, ModalHeader} from "shards-react";
 import MaterialTable, {MTableToolbar} from "material-table";
+import Button from "@material-ui/core/Button";
 
 import Translator from "../../../components/Translator";
 import PageRouteHeader from "../../../components/PageRouteHeader";
-import Button from "@material-ui/core/Button";
 
 const Department = ({onClickEvent}) => {
   const tableStyle = {
@@ -43,8 +44,28 @@ const Department = ({onClickEvent}) => {
   )
 };
 
-export const CreateDepartmentModal = () => {
-  return "This is department modal"
+export const CreateDepartmentModal = ({onClickClose}) => {
+  return(
+    <React.Fragment>
+      <ModalHeader className="home-modal-header" tag="div">
+        <Translator id="departmentGroup.createNewDepartment"/>
+        <button className="close-button" onClick={onClickClose}>
+          <i className="fas fa-times"/>
+        </button>
+      </ModalHeader>
+      <ModalBody>
+        <FormGroup className="input-new-department-name">
+          <label htmlFor="input-new-user-fullname">
+            <Translator id="departmentGroup.department"/>
+          </label>
+          <FormInput
+            id="input-new-user-fullname"
+            invalid={formStatus.fullname.invalid}
+            onChange={e => updateFormField(e.target.value, "fullname")}/>
+        </FormGroup>
+      </ModalBody>
+    </React.Fragment>
+  )
 };
 
 export default Department
