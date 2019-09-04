@@ -4,6 +4,7 @@
     "create": "Buat",
     "add": "Tambah",
     "language": "Bahasa",
+    "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
   },
   "userGroup": {
@@ -17,6 +18,8 @@
     "createNewUser": "Buat Pengguna Baru"
   },
   "departmentGroup": {
+    "departmentId": "ID Departemen",
+    "departmentName": "Nama Departemen",
     "selectDepartment": "Pilih departemen",
     "department": "Departemen",
     "list": "Daftar",

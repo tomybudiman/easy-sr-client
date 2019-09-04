@@ -116,7 +116,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
         const {CreateUserModal} = require("./User");
         return <CreateUserModal/>
       case "createDepartment":
-        setModalSize("sm");
+        setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
         return <CreateDepartmentModal/>
       default:
@@ -144,7 +144,7 @@ const Home = () => {
     }
   };
   const sidebarOnClickHandler = data => {
-    const closeModalScopeId = ["listUser", "createUser", "listDepartment", "createDepartment", "materiality", "disclosure"];
+    const closeModalScopeId = ["dashboard", "listUser", "createUser", "department", "materiality", "disclosure"];
     openHomeModal(data);
     if(closeModalScopeId.includes(data.data.id) && screenMobile){
       setSidebarOpen(!sidebarOpen);
@@ -170,7 +170,7 @@ const Home = () => {
               <div className="user-logo-text">
                 <p>TB</p>
               </div>
-              <div className="user-identity" onClick={() => console.log('ok')}>
+              <div className="user-identity">
                 <p>Tomy Budiman</p>
                 <button>
                   <i className="fas fa-angle-down"/>
