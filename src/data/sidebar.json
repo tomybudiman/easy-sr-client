@@ -1,5 +1,11 @@
 [
   {
+    "id": "dashboard",
+    "label": "commonGroup.dashboard",
+    "iconClassname": "fas fa-tachometer-alt",
+    "path": "/"
+  },
+  {
     "id": "user",
     "label": "userGroup.user",
     "iconClassname": "far fa-user",

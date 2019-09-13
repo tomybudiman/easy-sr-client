@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../Acuralabs/acuralabs-dashboard/.idea/acuralabs-dashboard.iml" filepath="$PROJECT_DIR$/../../Acuralabs/acuralabs-dashboard/.idea/acuralabs-dashboard.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/easy-sr.iml" filepath="$PROJECT_DIR$/.idea/easy-sr.iml" />
     </modules>
   </component>

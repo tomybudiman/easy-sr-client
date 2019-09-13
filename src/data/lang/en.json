@@ -4,6 +4,7 @@
     "create": "Create",
     "add": "Add",
     "language": "Language",
+    "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
   },
   "userGroup": {
@@ -17,6 +18,8 @@
     "createNewUser": "Create New User"
   },
   "departmentGroup": {
+    "departmentId": "Department ID",
+    "departmentName": "Department Name",
     "selectDepartment": "Select department",
     "department": "Department",
     "list": "List",

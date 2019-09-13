@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import moment from "moment";
 import {
-  ModalBody, ModalHeader, ModalFooter, FormGroup, FormInput, FormSelect, FormCheckbox, Button as ButtonStrap
+  ModalBody, ModalHeader, ModalFooter, FormGroup, FormInput, FormSelect, FormCheckbox, Button as ButtonShards
 } from "shards-react";
 import MaterialTable, {MTableToolbar} from "material-table";
 import Button from "@material-ui/core/Button";
@@ -181,9 +181,9 @@ export const CreateUserModal = ({onClickClose}) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <ButtonStrap className="custom-button" onClick={() => checkFormThenSubmit()}>
+        <ButtonShards className="custom-button" onClick={() => checkFormThenSubmit()}>
           <Translator id="commonGroup.save"/>
-        </ButtonStrap>
+        </ButtonShards>
       </ModalFooter>
     </React.Fragment>
   )
