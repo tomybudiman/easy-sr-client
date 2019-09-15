@@ -1,17 +1,11 @@
-<<<<<<< HEAD
-import React from "react";
-import {FormGroup, FormInput, ModalBody, ModalHeader} from "shards-react";
-import MaterialTable, {MTableToolbar} from "material-table";
-import Button from "@material-ui/core/Button";
-=======
 import React, {useState} from "react";
 import MaterialTable, {MTableToolbar} from "material-table";
 import {FormGroup, FormInput, ModalBody, ModalFooter, ModalHeader, Button as ButtonShards} from "shards-react";
 import useStateWithCallback from "use-state-with-callback";
->>>>>>> 07c49117d535017e3cf051cb3721db980b3618f8
 
 import Translator from "../../../components/Translator";
 import PageRouteHeader from "../../../components/PageRouteHeader";
+import Button from "@material-ui/core/Button";
 
 const Department = ({onClickEvent}) => {
   const tableStyle = {
@@ -51,51 +45,34 @@ const Department = ({onClickEvent}) => {
   )
 };
 
-<<<<<<< HEAD
-export const CreateDepartmentModal = ({onClickClose}) => {
-  return(
-    <React.Fragment>
-      <ModalHeader className="home-modal-header" tag="div">
-        <Translator id="departmentGroup.createNewDepartment"/>
-        <button className="close-button" onClick={onClickClose}>
-          <i className="fas fa-times"/>
-        </button>
-      </ModalHeader>
-      <ModalBody>
-        <FormGroup className="input-new-department-name">
-          <label htmlFor="input-new-user-fullname">
-            <Translator id="departmentGroup.department"/>
-          </label>
-          <FormInput
-            id="input-new-user-fullname"
-            invalid={formStatus.fullname.invalid}
-            onChange={e => updateFormField(e.target.value, "fullname")}/>
-        </FormGroup>
-      </ModalBody>
-=======
 export const CreateDepartmentModal = () => {
-  // const preFormatString = departmentName.trim().replace(/[^a-zA-Z0-9\s]/g, "");
-  // const formattedId = preFormatString.replace(/\s/g, "_").toLowerCase();
   const [formField, setFormField] = useState({
     departmentName: {value: "", isValid: true},
     departmentId: {value: "", isValid: true}
   });
   const updateFormField = ({target}) => {
-    const baseObjValue = {
-      ...formField,
-      [target.name]: {
-        ...formField[target.name],
-        value: target.value
-      }
+    const idValue = value => {
+      return value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
     };
+    const createObj = (baseObj = formField, key, value) => ({
+      ...baseObj,
+      [key || target.name]: {
+        ...baseObj[key || target.name],
+        value: value || target.value
+      }
+    });
     if(formField[target.name].isValid){
     }else{
     }
     switch(target.name){
       case "departmentName":
+        const value = target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
+        setFormField(createObj(createObj(), "departmentId", value));
+        break;
       case "departmentId":
       default:
-          break;
+        setFormField(createObj(createObj(), target.name, target.value));
+        break;
     }
   };
   const checkFormThenSubmit = () => {};
@@ -112,7 +89,6 @@ export const CreateDepartmentModal = () => {
           <FormInput
             name="departmentName"
             id="input-new-department-name"
-            value={formField.departmentName.value}
             invalid={!formField.departmentName.isValid}
             onChange={updateFormField}/>
         </FormGroup>
@@ -133,7 +109,6 @@ export const CreateDepartmentModal = () => {
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>
->>>>>>> 07c49117d535017e3cf051cb3721db980b3618f8
     </React.Fragment>
   )
 };
