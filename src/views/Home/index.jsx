@@ -8,8 +8,8 @@ import store from "../../state";
 import history from "../../utils/history";
 import sidebarJson from "../../data/sidebar";
 import {changeLocale} from "../../state/actions";
-import {sidebarChildItemHeight} from "./index.scss";
 import Translator from "../../components/Translator";
+import {sidebarChildItemHeight} from "./index.scss";
 
 // Import Components
 const User = Loadable({

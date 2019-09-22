@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import MaterialTable, {MTableToolbar} from "material-table";
 import {FormGroup, FormInput, ModalBody, ModalFooter, ModalHeader, Button as ButtonShards} from "shards-react";
-import useStateWithCallback from "use-state-with-callback";
 
 import Translator from "../../../components/Translator";
 import PageRouteHeader from "../../../components/PageRouteHeader";
