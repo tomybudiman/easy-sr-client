@@ -17,19 +17,20 @@ const User = ({onClickEvent}) => {
     boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
   };
   const tableOptions = {
-    showTitle: false
+    showTitle: false,
+    search: false
   };
   const tableColumns = [
-    {title: "Fullname", field: "fullname"},
-    {title: "Email", field: "email"},
-    {title: "Roles", render: ({roles}) => roles.join(", ")},
-    {title: "Department", field: "department"},
-    {title: "Created At", field: "createdAt"},
+    {title: "Fullname", field: "fullname", filtering: false, sorting: false},
+    {title: "Email", field: "email", filtering: false, sorting: false},
+    {title: "Roles", render: ({roles}) => roles.join(", "), filtering: false, sorting: false},
+    {title: "Department", field: "department", filtering: false, sorting: false},
+    {title: "Created At", field: "createdAt", filtering: false, sorting: false},
     {title: "Actions", render: rowData => (
       <Button className="datatable-action-button" onClick={() => setSelectedUser(rowData)}>
         <i className="fas fa-user-cog"/>
       </Button>
-    )}
+    ), filtering: false, sorting: false}
   ];
   const tableComponents = {
     Toolbar: props => (
@@ -63,9 +64,10 @@ const User = ({onClickEvent}) => {
 
 export const CreateUserModal = ({onClickClose}) => {
   const [roleCheckbox, setRoleCheckbox] = useState({
-    disclosure: false,
-    materiality: false,
-    reviewer: false
+    org_admin: {label: "Admin", value: false},
+    org_developer: {label: "Developer", value: false},
+    org_surveyor: {label: "Surveyor", value: false},
+    org_viewer: {label: "Viewer", value: false}
   });
   const [formStatus, updateFormStatus] = useState({
     fullname: {value: null, invalid: false},
@@ -73,6 +75,7 @@ export const CreateUserModal = ({onClickClose}) => {
     department: {value: null, invalid: false},
     role: {value: null, invalid: false}
   });
+  // Functions
   const toggleRoleCheckbox = (id) => {
     const newRoleCheckbox = {...roleCheckbox, [id]: !roleCheckbox[id]};
     const filterCheckbox = Object.keys(roleCheckbox).filter(eachKey => newRoleCheckbox[eachKey] !== false);
@@ -162,22 +165,15 @@ export const CreateUserModal = ({onClickClose}) => {
           <label>
             <Translator id="userGroup.role"/>
           </label>
-          <FormCheckbox
-            className="custom-checkbox"
-            checked={roleCheckbox.disclosure}
-            onChange={() => toggleRoleCheckbox("disclosure")}>
-            Disclosure
-          </FormCheckbox>
-          <FormCheckbox
-            checked={roleCheckbox.materiality}
-            onChange={() => toggleRoleCheckbox("materiality")}>
-            Materiality Surveyor
-          </FormCheckbox>
-          <FormCheckbox
-            checked={roleCheckbox.reviewer}
-            onChange={() => toggleRoleCheckbox("reviewer")}>
-            Reviewer
-          </FormCheckbox>
+          {Object.keys(roleCheckbox).map(each => (
+            <FormCheckbox
+              key={each}
+              className="custom-checkbox"
+              checked={roleCheckbox[each].value}
+              onChange={() => toggleRoleCheckbox(each)}>
+              {roleCheckbox[each].label}
+            </FormCheckbox>
+          ))}
         </FormGroup>
       </ModalBody>
       <ModalFooter>

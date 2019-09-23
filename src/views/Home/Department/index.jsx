@@ -12,11 +12,12 @@ const Department = ({onClickEvent}) => {
     boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
   };
   const tableOptions = {
-    showTitle: false
+    showTitle: false,
+    search: false
   };
   const tableColumns = [
-    {title: "Name", field: "name"},
-    {title: "ID", field: "id"}
+    {title: "Name", field: "name", filtering: false, sorting: false},
+    {title: "ID", field: "id", filtering: false, sorting: false}
   ];
   const tableComponents = {
     Toolbar: props => (

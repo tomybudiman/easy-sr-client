@@ -6,6 +6,7 @@ import useStateWithCallback from "use-state-with-callback";
 
 import store from "../../state";
 import history from "../../utils/history";
+import {logoutMethod} from "../Auth/fetch";
 import sidebarJson from "../../data/sidebar";
 import {changeLocale} from "../../state/actions";
 import Translator from "../../components/Translator";
@@ -177,7 +178,9 @@ const Home = () => {
                 </button>
               </div>
             </div>
-            <div className="user-loggedin-dialog"></div>
+            <div className="user-loggedin-dialog">
+              <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
+            </div>
           </div>
         </div>
         <div className="body">
