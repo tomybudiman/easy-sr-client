@@ -8,6 +8,7 @@ import "./app.scss";
 import "shards-ui/dist/css/shards.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import {refreshTokenMethod} from "./Auth/fetch";
 import {setAuthToken} from "../state/actions";
 import history from "../utils/history";
 import store from "../state";
@@ -26,6 +27,7 @@ const App = () => {
   const rootRoute = history.location.pathname.slice(1).split("/")[0];
   if(Cookies.get("UID")){
     store.dispatch(setAuthToken(Cookies.get("UID")));
+    refreshTokenMethod(Cookies.get("UID"));
     if(rootRoute !== "dashboard"){
       history.replace({pathname: "/dashboard"});
     }
