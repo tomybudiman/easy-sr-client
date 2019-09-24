@@ -1,6 +1,7 @@
-import React from "react";
+import React, {Fragment} from "react";
 import Loadable from "react-loadable";
 import {Router, Route, Redirect, Switch} from "react-router-dom";
+import {NotificationContainer} from "react-notifications";
 import {Provider} from "react-redux";
 import Cookies from "js-cookie";
 
@@ -33,17 +34,20 @@ const App = () => {
     }
   }
   return(
-    <Provider store={store}>
-      <Router history={history}>
-        <Switch>
-          <Route exact path="/" render={() => (
-            <Redirect to="/dashboard"/>
-          )}/>
-          <Route path="/dashboard" component={Home}/>
-          <Route exact path="/auth" component={Auth}/>
-        </Switch>
-      </Router>
-    </Provider>
+    <Fragment>
+      <NotificationContainer/>
+      <Provider store={store}>
+        <Router history={history}>
+          <Switch>
+            <Route exact path="/" render={() => (
+              <Redirect to="/dashboard"/>
+            )}/>
+            <Route path="/dashboard" component={Home}/>
+            <Route exact path="/auth" component={Auth}/>
+          </Switch>
+        </Router>
+      </Provider>
+    </Fragment>
   )
 };
 

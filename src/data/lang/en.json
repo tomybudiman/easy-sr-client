@@ -1,4 +1,7 @@
 {
+  "warning": {
+    "choseAnOption": "Please choose an option"
+  },
   "commonGroup": {
     "save": "Save",
     "create": "Create",
@@ -13,6 +16,7 @@
     "list": "List",
     "email": "Email",
     "role": "Role",
+    "password": "Password",
     "userList": "User List",
     "fullname": "Full Name",
     "createNew": "Create New",

@@ -1,3 +1,32 @@
+@import "../../../assets/style/variables";
+
+@mixin create-new-user {
+	.create-new-user {
+		.password-container {
+			width: 100%;
+			display: flex;
+			position: relative;
+			align-items: center;
+			button {
+				right: 8px;
+				padding: 0;
+				width: 24px;
+				height: 24px;
+				border: none;
+				outline: none;
+				font-size: 16px;
+				position: absolute;
+				background-color: transparent;
+			}
+		}
+		.input-new-user-role .error-msg {
+			font-size: 14px;
+			margin-bottom: 0;
+			color: rgba($dangerColor, 0.7);
+		}
+	}
+}
+
 .user-datatable-toolbar {
 	top: 0;
 	height: 64px;

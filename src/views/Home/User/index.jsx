@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import moment from "moment";
 import {
   ModalBody, ModalHeader, ModalFooter, FormGroup, FormInput, FormSelect, FormCheckbox, Button as ButtonShards
 } from "shards-react";
@@ -7,8 +6,26 @@ import MaterialTable, {MTableToolbar} from "material-table";
 import Button from "@material-ui/core/Button";
 import {isEmpty} from "lodash/core";
 
+import {getUsers, createUser} from "./fetch";
 import Translator from "../../../components/Translator";
 import PageRouteHeader from "../../../components/PageRouteHeader";
+
+const getRoleAlias = id => {
+  switch(id){
+    case "superadmin":
+      return "Superadmin";
+    case "org_admin":
+      return "Admin";
+    case "org_developer":
+      return "Developer";
+    case "org_surveyor":
+      return "Surveyor";
+    case "org_viewer":
+      return "Viewer";
+    default:
+      return null;
+  }
+};
 
 const User = ({onClickEvent}) => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -23,8 +40,7 @@ const User = ({onClickEvent}) => {
   const tableColumns = [
     {title: "Fullname", field: "fullname", filtering: false, sorting: false},
     {title: "Email", field: "email", filtering: false, sorting: false},
-    {title: "Roles", render: ({roles}) => roles.join(", "), filtering: false, sorting: false},
-    {title: "Department", field: "department", filtering: false, sorting: false},
+    {title: "Roles", field: "roles", filtering: false, sorting: false},
     {title: "Created At", field: "createdAt", filtering: false, sorting: false},
     {title: "Actions", render: rowData => (
       <Button className="datatable-action-button" onClick={() => setSelectedUser(rowData)}>
@@ -44,9 +60,27 @@ const User = ({onClickEvent}) => {
       </React.Fragment>
     )
   };
-  const data = [
-    {fullname: "Tomy Budiman", email: "tomy.budiman@acuralabs.ai", roles: ["disclosure_user", "materiality_surveyor"], department: "Whatever", createdAt: moment().toISOString()}
-  ];
+  const data = query => {
+    return new Promise(resolve => {
+      getUsers().then(res => {
+        const formattedData = res.rows.map(each => {
+          return {
+            fullname: each.fullname,
+            email: each.email,
+            roles: each.roles.map(eachRole => getRoleAlias(eachRole.name)).join(", "),
+            department: "Whatever",
+            createdAt: each.createdAt
+          }
+        });
+        resolve({
+          data: formattedData,
+          page: res.page - 1,
+          totalCount: res.count
+        });
+      }).catch(err => {
+      });
+    });
+  };
   return(
     <React.Fragment>
       <PageRouteHeader>
@@ -72,13 +106,13 @@ export const CreateUserModal = ({onClickClose}) => {
   const [formStatus, updateFormStatus] = useState({
     fullname: {value: null, invalid: false},
     email: {value: null, invalid: false},
-    department: {value: null, invalid: false},
+    password: {value: null, invalid: false, isPassword: true},
     role: {value: null, invalid: false}
   });
   // Functions
   const toggleRoleCheckbox = (id) => {
-    const newRoleCheckbox = {...roleCheckbox, [id]: !roleCheckbox[id]};
-    const filterCheckbox = Object.keys(roleCheckbox).filter(eachKey => newRoleCheckbox[eachKey] !== false);
+    const newRoleCheckbox = {...roleCheckbox, [id]: {...roleCheckbox[id], value: !roleCheckbox[id].value}};
+    const filterCheckbox = Object.keys(roleCheckbox).filter(eachKey => newRoleCheckbox[eachKey].value !== false);
     setRoleCheckbox(newRoleCheckbox);
     updateFormField(filterCheckbox, "role");
   };
@@ -91,19 +125,25 @@ export const CreateUserModal = ({onClickClose}) => {
         const mailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
         updateFormStatus({...formStatus, email: {value: data, invalid: !mailRegex.test(data)}});
         break;
-      case "department":
-        updateFormStatus({...formStatus, department: {value: data, invalid: data === "default"}});
-        break;
       case "role":
         updateFormStatus({...formStatus, role: {value: data, invalid: isEmpty(data)}});
+        break;
+      case "password":
+        updateFormStatus({...formStatus, password: {value: data, invalid: isEmpty(data)}});
         break;
       default:
         break;
     }
   };
+  const togglePasswordView = () => {
+    updateFormStatus({
+      ...formStatus,
+      password: {...formStatus.password, isPassword: !formStatus.password.isPassword}
+    });
+  };
   const checkFormThenSubmit = () => {
     let tempFormStatus = {...formStatus};
-    const filterErrorform = Object.keys(tempFormStatus).filter(eachKey => {
+    const isFormValid = Object.keys(tempFormStatus).filter(eachKey => {
       tempFormStatus = {
         ...tempFormStatus,
         [eachKey]: {
@@ -114,10 +154,17 @@ export const CreateUserModal = ({onClickClose}) => {
       if(isEmpty(tempFormStatus[eachKey].value) || tempFormStatus[eachKey].invalid){
         return eachKey
       }
-    });
+    }).length === 0;
     updateFormStatus(tempFormStatus);
-    if(filterErrorform.length === 0){
-      // Submit create new user form
+    if(isFormValid){
+      createUser({
+        email: formStatus.email.value,
+        password: formStatus.password.value,
+        confirm_password: formStatus.password.value,
+        fullname: formStatus.fullname.value
+      }).then(res => {
+        console.log(res);
+      });
     }
   };
   return(
@@ -128,7 +175,7 @@ export const CreateUserModal = ({onClickClose}) => {
           <i className="fas fa-times"/>
         </button>
       </ModalHeader>
-      <ModalBody>
+      <ModalBody className="create-new-user">
         <FormGroup className="input-new-user-fullname">
           <label htmlFor="input-new-user-fullname">
             <Translator id="userGroup.fullname"/>
@@ -147,33 +194,37 @@ export const CreateUserModal = ({onClickClose}) => {
             invalid={formStatus.email.invalid}
             onChange={e => updateFormField(e.target.value, "email")}/>
         </FormGroup>
-        <FormGroup className="input-new-user-department">
-          <label htmlFor="input-new-user-role">
-            <Translator id="departmentGroup.department"/>
+        <FormGroup className="input-new-user-password">
+          <label htmlFor="input-new-user-password">
+            <Translator id="userGroup.password"/>
           </label>
-          <FormSelect
-            id="input-new-user-department"
-            invalid={formStatus.department.invalid}
-            onChange={e => updateFormField(e.target.value, "department")}>
-            <option value="default">
-              {Translator({id: "departmentGroup.selectDepartment"})}
-            </option>
-            <option value="department">Department</option>
-          </FormSelect>
+          <div className="password-container">
+            <FormInput
+              id="input-new-user-password"
+              invalid={formStatus.password.invalid}
+              type={formStatus.password.isPassword ? "password" : "text"}
+              onChange={e => updateFormField(e.target.value, "password")}/>
+            <button onClick={togglePasswordView}>
+              {formStatus.password.isPassword ? <i className="fas fa-eye"/> : <i className="fas fa-eye-slash"/>}
+            </button>
+          </div>
         </FormGroup>
         <FormGroup className="input-new-user-role">
           <label>
             <Translator id="userGroup.role"/>
+            {formStatus.role.invalid ? <p className="error-msg"><Translator id="warning.choseAnOption"/></p> : null}
           </label>
-          {Object.keys(roleCheckbox).map(each => (
-            <FormCheckbox
-              key={each}
-              className="custom-checkbox"
-              checked={roleCheckbox[each].value}
-              onChange={() => toggleRoleCheckbox(each)}>
-              {roleCheckbox[each].label}
-            </FormCheckbox>
-          ))}
+          {Object.keys(roleCheckbox).map(each => {
+            return(
+              <FormCheckbox
+                key={each}
+                className="custom-checkbox"
+                checked={roleCheckbox[each].value}
+                onChange={() => toggleRoleCheckbox(each)}>
+                {roleCheckbox[each].label}
+              </FormCheckbox>
+            )
+          })}
         </FormGroup>
       </ModalBody>
       <ModalFooter>

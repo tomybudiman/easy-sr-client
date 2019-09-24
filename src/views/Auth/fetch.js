@@ -1,13 +1,16 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import get from "lodash/get";
 import moment from "moment";
 
 import store from "../../state";
 import history from "../../utils/history";
 import {setAuthToken} from "../../state/actions";
+import {NotificationManager} from "react-notifications";
 
 export const refreshTokenMethod = (token) => {
-  const tokenExpires = moment.unix(readTokenData(token).exp).diff(moment(), "s");
+  // const tokenExpires = moment.unix(readTokenData(token).exp).diff(moment(), "s");
+  const tokenExpires = 3600;
   const refreshDelay = 300; // In seconds
   if((tokenExpires - refreshDelay) * 1000 <= 2147483647){
     setTimeout(() => {
@@ -69,6 +72,7 @@ export const loginMethod = (email, password) => {
       refreshTokenMethod(data.token);
       resolve(data);
     }).catch(err => {
+      NotificationManager.error(get(err, "response.data.message") || "Network error!");
       console.error(err);
       reject(err);
     });

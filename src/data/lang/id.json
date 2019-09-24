@@ -1,4 +1,7 @@
 {
+  "warning": {
+    "choseAnOption": "Harap pilih pilihan"
+  },
   "commonGroup": {
     "save": "Simpan",
     "create": "Buat",
@@ -13,6 +16,7 @@
     "list": "Daftar",
     "email": "Email",
     "role": "Peranan",
+    "password": "Kata Sandi",
     "userList": "Daftar Pengguna",
     "fullname": "Nama Lengkap",
     "createNew": "Buat Baru",
