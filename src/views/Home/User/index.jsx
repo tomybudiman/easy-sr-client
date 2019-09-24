@@ -77,7 +77,6 @@ const User = ({onClickEvent}) => {
           page: res.page - 1,
           totalCount: res.count
         });
-      }).catch(err => {
       });
     });
   };
@@ -109,6 +108,7 @@ export const CreateUserModal = ({onClickClose}) => {
     password: {value: null, invalid: false, isPassword: true},
     role: {value: null, invalid: false}
   });
+  const [mainButtonDisabled, setButtonDisabled] = useState(false);
   // Functions
   const toggleRoleCheckbox = (id) => {
     const newRoleCheckbox = {...roleCheckbox, [id]: {...roleCheckbox[id], value: !roleCheckbox[id].value}};
@@ -129,7 +129,7 @@ export const CreateUserModal = ({onClickClose}) => {
         updateFormStatus({...formStatus, role: {value: data, invalid: isEmpty(data)}});
         break;
       case "password":
-        updateFormStatus({...formStatus, password: {value: data, invalid: isEmpty(data)}});
+        updateFormStatus({...formStatus, password: {...formStatus.password, value: data, invalid: isEmpty(data)}});
         break;
       default:
         break;
@@ -157,14 +157,13 @@ export const CreateUserModal = ({onClickClose}) => {
     }).length === 0;
     updateFormStatus(tempFormStatus);
     if(isFormValid){
+      setButtonDisabled(true);
       createUser({
         email: formStatus.email.value,
         password: formStatus.password.value,
         confirm_password: formStatus.password.value,
         fullname: formStatus.fullname.value
-      }).then(res => {
-        console.log(res);
-      });
+      }).then(() => onClickClose());
     }
   };
   return(
@@ -204,7 +203,7 @@ export const CreateUserModal = ({onClickClose}) => {
               invalid={formStatus.password.invalid}
               type={formStatus.password.isPassword ? "password" : "text"}
               onChange={e => updateFormField(e.target.value, "password")}/>
-            <button onClick={togglePasswordView}>
+            <button onClick={togglePasswordView} disabled={mainButtonDisabled}>
               {formStatus.password.isPassword ? <i className="fas fa-eye"/> : <i className="fas fa-eye-slash"/>}
             </button>
           </div>
