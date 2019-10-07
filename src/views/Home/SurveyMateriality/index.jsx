@@ -15,9 +15,6 @@ const Materiality = () => {
     search: false
   };
   const data = query => {
-    getSurveys().then(res => {
-      console.log(res);
-    });
   };
   return(
     <Fragment>
@@ -25,7 +22,6 @@ const Materiality = () => {
         <Translator id="surveyGroup.materialitySurvey"/>
       </PageRouteHeader>
       <MaterialTable
-        data={data}
         style={tableStyle}
         options={tableOptions}/>
     </Fragment>
