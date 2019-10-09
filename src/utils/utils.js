@@ -1,6 +1,6 @@
 export const readUrlQueryValue = name => {
   const url = window.location.href;
-  name = name.replace(/[\[\]]/g, '\\$&');
+  name = name.replace(/[[\]]/g, '\\$&');
   const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
   const result = regex.exec(url);
   if(!result){

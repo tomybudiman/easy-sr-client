@@ -1,34 +1,48 @@
-import axios from "axios";
 import Cookies from "js-cookie";
+import jwt from "jsonwebtoken";
 import get from "lodash/get";
 import moment from "moment";
+import axios from "axios";
 
 import store from "../../state";
 import history from "../../utils/history";
-import {setAuthToken} from "../../state/actions";
+import {setAuthToken, setTokenVerified} from "../../state/actions";
 import {NotificationManager} from "react-notifications";
 
-export const refreshTokenMethod = (token) => {
-  // const tokenExpires = moment.unix(readTokenData(token).exp).diff(moment(), "s");
-  const tokenExpires = 3600;
+const generateNewToken = (data) => {
+  const tokenExpiryTime = 3600;
+  const expiryTime = Math.floor(Date.now() / 1000) + tokenExpiryTime;
+  return {
+    token: jwt.sign({exp: expiryTime, data: data}, process.env.REACT_APP_JWT_SECRET),
+    expiryTime
+  };
+};
+
+export const refreshTokenMethod = (token, verify = false) => {
+  const tokenExpires = moment.unix(readTokenData(token).exp).diff(moment(), "s");
   const refreshDelay = 300; // In seconds
-  if((tokenExpires - refreshDelay) * 1000 <= 2147483647){
-    setTimeout(() => {
-      axios({
-        method: "GET",
-        url: `${process.env.REACT_APP_API_HOST}/auth/refresh_token`,
-        headers: {"Authorization": `Bearer ${token}`}
-      }).then(({data}) => {
-        store.dispatch(setAuthToken(data.token));
-        Cookies.set("UID", data.token);
-        refreshTokenMethod(data.token);
-      }).catch(err => {
-        console.error(err);
-        if(err.response.status === 401){
-          logoutMethod();
-        }
-      });
-    }, (tokenExpires - refreshDelay) * 1000);
+  const axiosFetch = () => {
+    axios({
+      method: "GET",
+      url: `${process.env.REACT_APP_API_HOST}/auth/refresh_token`,
+      headers: {"Authorization": `Bearer ${readTokenData(token).data}`}
+    }).then(({data}) => {
+      const {token, expiryTime} = generateNewToken(data.token);
+      Cookies.set("UID", token, {expires: new Date(expiryTime * 1000)});
+      store.dispatch(setTokenVerified(true));
+      store.dispatch(setAuthToken(data.token));
+      refreshTokenMethod(token);
+    }).catch(err => {
+      console.error(err);
+      if(err.response.status === 401){
+        logoutMethod();
+      }
+    });
+  };
+  if(verify){
+    axiosFetch();
+  }else{
+    setTimeout(axiosFetch, (tokenExpires - refreshDelay) * 1000);
   }
 };
 
@@ -67,9 +81,11 @@ export const loginMethod = (email, password) => {
       headers: {"Content-Type": "application/json"},
       data: JSON.stringify({email, password})
     }).then(({data}) => {
-      Cookies.set("UID", data.token, {expires: new Date(readTokenData(data.token).exp * 1000)});
+      const {token, expiryTime} = generateNewToken(data.token);
+      Cookies.set("UID", token, {expires: new Date(expiryTime * 1000)});
+      store.dispatch(setTokenVerified(true));
       store.dispatch(setAuthToken(data.token));
-      refreshTokenMethod(data.token);
+      refreshTokenMethod(token);
       resolve(data);
     }).catch(err => {
       NotificationManager.error(get(err, "response.data.message") || "Network error!");

@@ -7,14 +7,14 @@
 	align-items: center;
 	flex-direction: column;
 	justify-content: center;
-	background-color: $secondaryColor;
 	.auth-card {
 		width: 90%;
 		padding: 32px;
 		max-width: 450px;
 		border-radius: 8px;
 		box-sizing: border-box;
-		background-color: $lightColorSecondary;
+		background-color: #FFFFFF;
+		box-shadow: 0 40px 80px rgba(27,30,78,.08);
 		.auth-card-title {
 			p {
 				margin: 0;
@@ -46,6 +46,7 @@
 				}
 			}
 			button {
+				padding: 0;
 				width: 100%;
 				height: 42px;
 				border: none;
