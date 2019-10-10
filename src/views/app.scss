@@ -1,6 +1,54 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
 @import "../assets/style/variables";
 
+@mixin custom-shards-component-style {
+	.custom-checkbox .custom-control-label::after {
+		left: -18px;
+	}
+	.custom-button {
+		letter-spacing: 1px;
+		font-family: "Roboto", sans-serif;
+	}
+	.custom-card-box-shadow {
+		box-shadow: 3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09);
+	}
+}
+
+@mixin material-datatable-components {
+	.datatable-action-button {
+		width: 32px;
+		height: 32px;
+		min-width: 0;
+		color: $secondaryColor;
+	}
+}
+
+@mixin custom-modal-style {
+	.home-modal .modal-content {
+		.home-modal-header .modal-title {
+			width: 100%;
+			display: flex;
+			font-size: 24px;
+			align-items: center;
+			justify-content: space-between;
+			.close-button {
+				padding: 0;
+				border: none;
+				outline: none;
+				cursor: pointer;
+				color: $secondaryColor;
+				background-color: transparent;
+			}
+		}
+		.modal-footer button {
+			min-width: 90px;
+			img {
+				height: 22px;
+			}
+		}
+	}
+}
+
 * {
 	text-decoration: none !important;
 	font-family: "Roboto", sans-serif;
@@ -13,6 +61,9 @@ html, body, #root {
 	display: flex;
 	flex-wrap: wrap;
 	background-color: $lightColorSecondary;
+	@include custom-shards-component-style;
+	@include material-datatable-components;
+	@include custom-modal-style;
 	.modal {
 		overflow: auto;
 	}

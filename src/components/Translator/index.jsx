@@ -7,12 +7,13 @@ import en from "../../data/lang/en";
 
 const localeData = {id, en};
 
-const Translator = ({id}) => {
+const Translator = (id) => {
+  const newId = typeof id === "string" ? id : id.id;
   const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
   store.subscribe(() => {
     setActiveLocale(store.getState().reducerLocale.locale);
   });
-  return get(localeData[activeLocale], id) || id;
+  return get(localeData[activeLocale], newId) || newId;
 };
 
 export default Translator

@@ -1,15 +1,17 @@
 import React, {useState} from "react";
 import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
+import useStateWithCallback from "use-state-with-callback";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
-import useStateWithCallback from "use-state-with-callback";
+import get from "lodash/get";
 
 import store from "../../state";
 import history from "../../utils/history";
+import {logoutMethod} from "../Auth/fetch";
 import sidebarJson from "../../data/sidebar";
 import {changeLocale} from "../../state/actions";
-import {sidebarChildItemHeight} from "./index.scss";
 import Translator from "../../components/Translator";
+import {sidebarChildItemHeight} from "./index.scss";
 
 // Import Components
 const User = Loadable({
@@ -89,8 +91,8 @@ const SidebarContent = ({visible, onClickSidebar}) => {
       {sidebar.map((each, i) => {
         if(each.path){
           return(
-            <Link to={rootRoute+each.path}>
-              <SidebarItem key={i} data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+            <Link to={rootRoute+each.path} key={i}>
+              <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
             </Link>
           )
         }else{
@@ -114,15 +116,19 @@ const HomeModal = ({homeModal, toggleModal}) => {
       case "createUser":
         setModalSize("md");
         const {CreateUserModal} = require("./User");
-        return <CreateUserModal/>
+        return <CreateUserModal onClickClose={toggleModal}/>;
+      case "editUser":
+        setModalSize("md");
+        const {EditUserModal} = require("./User");
+        return <EditUserModal onClickClose={toggleModal}/>;
       case "createDepartment":
-        setModalSize("sm");
+        setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
-        return <CreateDepartmentModal/>
+        return <CreateDepartmentModal onClickClose={toggleModal}/>;
       default:
         return null
     }
-  }
+  };
   return(
     <Modal open={homeModal.state} toggle={toggleModal} className="home-modal" size={modalSize}>
       <RenderComponent/>
@@ -131,30 +137,44 @@ const HomeModal = ({homeModal, toggleModal}) => {
 };
 
 const Home = () => {
+  const user = get(store.getState().reducerAuth, "userTokenData.user") || {};
   const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
     document.querySelector(".sidebar").scrollTo(0, 0);
   });
   const [homeModal, setHomeModal] = useState({state: false, id: null});
+  const [prevEvent, setNewEvent] = useState(null);
   const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "createDepartment"];
+    const allowedModalId = ["createUser", "editUser", "createDepartment"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
     }
   };
-  const sidebarOnClickHandler = (data) => {
-    const closeModalScopeId = ["listUser", "createUser", "listDepartment", "createDepartment", "materiality", "disclosure"];
+  const sidebarOnClickHandler = data => {
+    const closeModalScopeId = ["dashboard", "listUser", "createUser", "department", "materiality", "disclosure"];
     openHomeModal(data);
     if(closeModalScopeId.includes(data.data.id) && screenMobile){
       setSidebarOpen(!sidebarOpen);
+    }
+  };
+  const toggleModal = event => {
+    setHomeModal({...homeModal, state: !homeModal.state});
+    setNewEvent(event);
+  };
+  const getSimpleName = () => {
+    if(user.fullname){
+      const splitFullname = user.fullname.split(" ").map(each => each.slice(0, 1));
+      return splitFullname.filter((each, i) => i === 0 || i === splitFullname.length - 1);
+    }else{
+      return null
     }
   };
   store.subscribe(() => {
     setActiveLocale(store.getState().reducerLocale.locale);
   });
   // Window Resize Event
-  window.addEventListener("resize", e => {
+  window.addEventListener("resize", () => {
     setScreenMobile(window.innerWidth <= 768);
     if(sidebarOpen){
       setSidebarOpen(window.innerWidth > 768);
@@ -162,22 +182,24 @@ const Home = () => {
   });
   return(
     <React.Fragment>
-      <HomeModal homeModal={homeModal} toggleModal={() => setHomeModal({...homeModal, state: !homeModal.state})}/>
+      <HomeModal homeModal={homeModal} toggleModal={toggleModal}/>
       <div className="root">
         <div className="appbar">
           <div className="user-loggedin" tabIndex="-1">
             <div className="selector-container">
               <div className="user-logo-text">
-                <p>TB</p>
+                <p>{getSimpleName()}</p>
               </div>
-              <div className="user-identity" onClick={() => console.log('ok')}>
-                <p>Tomy Budiman</p>
+              <div className="user-identity">
+                <p>{user.fullname}</p>
                 <button>
                   <i className="fas fa-angle-down"/>
                 </button>
               </div>
             </div>
-            <div className="user-loggedin-dialog"></div>
+            <div className="user-loggedin-dialog">
+              <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
+            </div>
           </div>
         </div>
         <div className="body">
@@ -198,8 +220,8 @@ const Home = () => {
             <div className="content-body">
               <Router history={history}>
                 <Switch>
-                  <Route exact path={`${rootRoute}/user`} component={User}/>
-                  <Route exact path={`${rootRoute}/department`} component={Department}/>
+                  <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
+                  <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal}/>}/>
                   <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
                   <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
                   <Route render={() => <Redirect to={rootRoute}/>}/>

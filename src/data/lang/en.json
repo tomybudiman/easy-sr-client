@@ -1,6 +1,16 @@
 {
+  "warning": {
+    "networkError": "Network error",
+    "sessionTimeout": "Session timeout",
+    "choseAnOption": "Please choose an option"
+  },
   "commonGroup": {
+    "save": "Save",
+    "create": "Create",
+    "add": "Add",
+    "logout": "Logout",
     "language": "Language",
+    "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
   },
   "userGroup": {
@@ -8,18 +18,27 @@
     "list": "List",
     "email": "Email",
     "role": "Role",
-    "fullname": "Full name",
-    "createNew": "Create new",
-    "createNewUser": "Create new user"
+    "password": "Password",
+    "userList": "User List",
+    "fullname": "Full Name",
+    "createNew": "Create New",
+    "editUser": "Edit User",
+    "createNewUser": "Create New User"
   },
   "departmentGroup": {
+    "departmentId": "Department ID",
+    "departmentName": "Department Name",
+    "selectDepartment": "Select department",
     "department": "Department",
     "list": "List",
-    "createNew": "Create new"
+    "createNew": "Create New",
+    "createNewDepartment": "Create New Department"
   },
-  "survey": {
+  "surveyGroup": {
     "survey": "Survey",
     "materiality": "Materiality",
-    "disclosure": "Disclosure"
+    "disclosure": "Disclosure",
+    "materialitySurvey": "Materiality Survey",
+    "disclosureSurvey": "Disclosure Survey"
   }
 }

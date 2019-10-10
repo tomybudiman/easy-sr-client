@@ -1,5 +1,11 @@
 [
   {
+    "id": "dashboard",
+    "label": "commonGroup.dashboard",
+    "iconClassname": "fas fa-tachometer-alt",
+    "path": "/"
+  },
+  {
     "id": "user",
     "label": "userGroup.user",
     "iconClassname": "far fa-user",
@@ -20,33 +26,22 @@
     "id": "department",
     "label": "departmentGroup.department",
     "iconClassname": "far fa-user-circle",
-    "isExpanded": false,
-    "child": [
-      {
-        "id": "listDepartment",
-        "label": "departmentGroup.list",
-        "path": "/department"
-      },
-      {
-        "id": "createDepartment",
-        "label": "departmentGroup.createNew"
-      }
-    ]
+    "path": "/department"
   },
   {
     "id": "survey",
-    "label": "survey.survey",
+    "label": "surveyGroup.survey",
     "iconClassname": "fas fa-poll",
     "isExpanded": false,
     "child": [
       {
         "id": "materiality",
-        "label": "survey.materiality",
+        "label": "surveyGroup.materiality",
         "path": "/survey/materiality"
       },
       {
         "id": "disclosure",
-        "label": "survey.disclosure",
+        "label": "surveyGroup.disclosure",
         "path": "/survey/disclosure"
       }
     ]

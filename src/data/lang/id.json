@@ -1,6 +1,16 @@
 {
+  "warning": {
+    "networkError": "Kesalahan jaringan",
+    "sessionTimeout": "Sesi berakhir",
+    "choseAnOption": "Harap pilih pilihan"
+  },
   "commonGroup": {
+    "save": "Simpan",
+    "create": "Buat",
+    "add": "Tambah",
+    "logout": "Keluar",
     "language": "Bahasa",
+    "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
   },
   "userGroup": {
@@ -8,18 +18,27 @@
     "list": "Daftar",
     "email": "Email",
     "role": "Peranan",
+    "password": "Kata Sandi",
+    "userList": "Daftar Pengguna",
     "fullname": "Nama Lengkap",
-    "createNew": "Buat baru",
-    "createNewUser": "Buat pengguna baru"
+    "createNew": "Buat Baru",
+    "editUser": "Konfigurasi Pengguna",
+    "createNewUser": "Buat Pengguna Baru"
   },
   "departmentGroup": {
+    "departmentId": "ID Departemen",
+    "departmentName": "Nama Departemen",
+    "selectDepartment": "Pilih departemen",
     "department": "Departemen",
     "list": "Daftar",
-    "createNew": "Buat baru"
+    "createNew": "Buat Baru",
+    "createNewDepartment": "Buat Department Baru"
   },
-  "survey": {
+  "surveyGroup": {
     "survey": "Survei",
     "materiality": "Materiality",
-    "disclosure": "Disclosure"
+    "disclosure": "Disclosure",
+    "materialitySurvey": "Materiality Survei",
+    "disclosureSurvey": "Disclosure Survei"
   }
 }
