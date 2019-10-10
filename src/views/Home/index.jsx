@@ -138,6 +138,7 @@ const Home = () => {
     document.querySelector(".sidebar").scrollTo(0, 0);
   });
   const [homeModal, setHomeModal] = useState({state: false, id: null});
+  const [prevEvent, setNewEvent] = useState(null);
   const openHomeModal = ({data}) => {
     const allowedModalId = ["createUser", "createDepartment"];
     if(allowedModalId.includes(data.id)){
@@ -151,11 +152,15 @@ const Home = () => {
       setSidebarOpen(!sidebarOpen);
     }
   };
+  const toggleModal = event => {
+    setHomeModal({...homeModal, state: !homeModal.state});
+    setNewEvent(event);
+  };
   store.subscribe(() => {
     setActiveLocale(store.getState().reducerLocale.locale);
   });
   // Window Resize Event
-  window.addEventListener("resize", e => {
+  window.addEventListener("resize", () => {
     setScreenMobile(window.innerWidth <= 768);
     if(sidebarOpen){
       setSidebarOpen(window.innerWidth > 768);
@@ -163,7 +168,7 @@ const Home = () => {
   });
   return(
     <React.Fragment>
-      <HomeModal homeModal={homeModal} toggleModal={() => setHomeModal({...homeModal, state: !homeModal.state})}/>
+      <HomeModal homeModal={homeModal} toggleModal={toggleModal}/>
       <div className="root">
         <div className="appbar">
           <div className="user-loggedin" tabIndex="-1">
@@ -201,7 +206,7 @@ const Home = () => {
             <div className="content-body">
               <Router history={history}>
                 <Switch>
-                  <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal}/>}/>
+                  <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
                   <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal}/>}/>
                   <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
                   <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>

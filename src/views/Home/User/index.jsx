@@ -6,8 +6,8 @@ import MaterialTable, {MTableToolbar} from "material-table";
 import Button from "@material-ui/core/Button";
 import {isEmpty} from "lodash/core";
 
-import {getUsers, createUser} from "./fetch";
 import Translator from "../../../components/Translator";
+import {getUsers, createUser, createUserRole} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const getRoleAlias = id => {
@@ -27,7 +27,8 @@ const getRoleAlias = id => {
   }
 };
 
-const User = ({onClickEvent}) => {
+const User = ({onClickEvent, prevEvent}) => {
+  const [tableRef, setTableRef] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const tableStyle = {
     marginTop: "16px",
@@ -80,6 +81,10 @@ const User = ({onClickEvent}) => {
       });
     });
   };
+  // INCOMING EVENT
+  if(prevEvent === "createUser"){
+    setTimeout(tableRef.onQueryChange, 0);
+  }
   return(
     <React.Fragment>
       <PageRouteHeader>
@@ -90,7 +95,8 @@ const User = ({onClickEvent}) => {
         style={tableStyle}
         columns={tableColumns}
         options={tableOptions}
-        components={tableComponents}/>
+        components={tableComponents}
+        tableRef={e => setTableRef(e)}/>
     </React.Fragment>
   )
 };
@@ -99,7 +105,6 @@ export const CreateUserModal = ({onClickClose}) => {
   const [roleCheckbox, setRoleCheckbox] = useState({
     org_admin: {label: "Admin", value: false},
     org_developer: {label: "Developer", value: false},
-    org_surveyor: {label: "Surveyor", value: false},
     org_viewer: {label: "Viewer", value: false}
   });
   const [formStatus, updateFormStatus] = useState({
@@ -141,7 +146,7 @@ export const CreateUserModal = ({onClickClose}) => {
       password: {...formStatus.password, isPassword: !formStatus.password.isPassword}
     });
   };
-  const checkFormThenSubmit = () => {
+  const checkFormThenSubmit = async () => {
     let tempFormStatus = {...formStatus};
     const isFormValid = Object.keys(tempFormStatus).filter(eachKey => {
       tempFormStatus = {
@@ -158,12 +163,24 @@ export const CreateUserModal = ({onClickClose}) => {
     updateFormStatus(tempFormStatus);
     if(isFormValid){
       setButtonDisabled(true);
-      createUser({
-        email: formStatus.email.value,
-        password: formStatus.password.value,
-        confirm_password: formStatus.password.value,
-        fullname: formStatus.fullname.value
-      }).then(() => onClickClose());
+      const selectedNewRole = Object.keys(roleCheckbox).filter(each => roleCheckbox[each].value);
+      try{
+        const creatingUser = await createUser({
+          email: formStatus.email.value,
+          password: formStatus.password.value,
+          confirm_password: formStatus.password.value,
+          fullname: formStatus.fullname.value
+        });
+        const creatingUserRole = await createUserRole({
+          user_id: creatingUser.id,
+          roles: selectedNewRole
+        });
+        if(creatingUserRole.result.length === selectedNewRole.length){
+          onClickClose("createUser");
+        }
+      }catch(err){
+
+      }
     }
   };
   return(
@@ -203,7 +220,7 @@ export const CreateUserModal = ({onClickClose}) => {
               invalid={formStatus.password.invalid}
               type={formStatus.password.isPassword ? "password" : "text"}
               onChange={e => updateFormField(e.target.value, "password")}/>
-            <button onClick={togglePasswordView} disabled={mainButtonDisabled}>
+            <button onClick={togglePasswordView}>
               {formStatus.password.isPassword ? <i className="fas fa-eye"/> : <i className="fas fa-eye-slash"/>}
             </button>
           </div>
@@ -227,7 +244,10 @@ export const CreateUserModal = ({onClickClose}) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <ButtonShards className="custom-button" onClick={() => checkFormThenSubmit()}>
+        <ButtonShards
+          className="custom-button"
+          disabled={mainButtonDisabled}
+          onClick={() => checkFormThenSubmit()}>
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>
