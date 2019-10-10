@@ -1,6 +1,7 @@
 const initialState = {
   authToken: null,
-  tokenVerified: null
+  tokenVerified: null,
+  userTokenData: null
 };
 
 export default (state = initialState, {type, payload}) => {
@@ -9,6 +10,8 @@ export default (state = initialState, {type, payload}) => {
       return {...state, authToken: payload};
     case "SET_TOKEN_VERIFIED":
       return {...state, tokenVerified: payload};
+    case "SET_USER_TOKEN_DATA":
+      return {...state, userTokenData: payload};
     default:
       return state
   }

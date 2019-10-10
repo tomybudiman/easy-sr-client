@@ -6,7 +6,7 @@ import axios from "axios";
 
 import store from "../../state";
 import history from "../../utils/history";
-import {setAuthToken, setTokenVerified} from "../../state/actions";
+import {setAuthToken, setTokenVerified, setUserTokenData} from "../../state/actions";
 import {NotificationManager} from "react-notifications";
 
 const generateNewToken = (data) => {
@@ -29,6 +29,7 @@ export const refreshTokenMethod = (token, verify = false) => {
     }).then(({data}) => {
       const {token, expiryTime} = generateNewToken(data.token);
       Cookies.set("UID", token, {expires: new Date(expiryTime * 1000)});
+      store.dispatch(setUserTokenData(readTokenData(data.token).session));
       store.dispatch(setTokenVerified(true));
       store.dispatch(setAuthToken(data.token));
       refreshTokenMethod(token);
@@ -82,6 +83,7 @@ export const loginMethod = (email, password) => {
     }).then(({data}) => {
       const {token, expiryTime} = generateNewToken(data.token);
       Cookies.set("UID", token, {expires: new Date(expiryTime * 1000)});
+      store.dispatch(setUserTokenData(readTokenData(data.token).session));
       store.dispatch(setTokenVerified(true));
       store.dispatch(setAuthToken(data.token));
       refreshTokenMethod(token);

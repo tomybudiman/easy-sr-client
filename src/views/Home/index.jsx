@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
+import useStateWithCallback from "use-state-with-callback";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
-import useStateWithCallback from "use-state-with-callback";
+import get from "lodash/get";
 
 import store from "../../state";
 import history from "../../utils/history";
@@ -116,6 +117,10 @@ const HomeModal = ({homeModal, toggleModal}) => {
         setModalSize("md");
         const {CreateUserModal} = require("./User");
         return <CreateUserModal onClickClose={toggleModal}/>;
+      case "editUser":
+        setModalSize("md");
+        const {EditUserModal} = require("./User");
+        return <EditUserModal onClickClose={toggleModal}/>;
       case "createDepartment":
         setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
@@ -132,6 +137,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
 };
 
 const Home = () => {
+  const user = get(store.getState().reducerAuth, "userTokenData.user") || {};
   const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
@@ -140,7 +146,7 @@ const Home = () => {
   const [homeModal, setHomeModal] = useState({state: false, id: null});
   const [prevEvent, setNewEvent] = useState(null);
   const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "createDepartment"];
+    const allowedModalId = ["createUser", "editUser", "createDepartment"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
     }
@@ -155,6 +161,14 @@ const Home = () => {
   const toggleModal = event => {
     setHomeModal({...homeModal, state: !homeModal.state});
     setNewEvent(event);
+  };
+  const getSimpleName = () => {
+    if(user.fullname){
+      const splitFullname = user.fullname.split(" ").map(each => each.slice(0, 1));
+      return splitFullname.filter((each, i) => i === 0 || i === splitFullname.length - 1);
+    }else{
+      return null
+    }
   };
   store.subscribe(() => {
     setActiveLocale(store.getState().reducerLocale.locale);
@@ -174,10 +188,10 @@ const Home = () => {
           <div className="user-loggedin" tabIndex="-1">
             <div className="selector-container">
               <div className="user-logo-text">
-                <p>TB</p>
+                <p>{getSimpleName()}</p>
               </div>
               <div className="user-identity">
-                <p>Tomy Budiman</p>
+                <p>{user.fullname}</p>
                 <button>
                   <i className="fas fa-angle-down"/>
                 </button>

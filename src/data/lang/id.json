@@ -22,6 +22,7 @@
     "userList": "Daftar Pengguna",
     "fullname": "Nama Lengkap",
     "createNew": "Buat Baru",
+    "editUser": "Konfigurasi Pengguna",
     "createNewUser": "Buat Pengguna Baru"
   },
   "departmentGroup": {

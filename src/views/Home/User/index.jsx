@@ -6,7 +6,9 @@ import MaterialTable, {MTableToolbar} from "material-table";
 import Button from "@material-ui/core/Button";
 import {isEmpty} from "lodash/core";
 
+import store from "../../../state";
 import Translator from "../../../components/Translator";
+import {setSelectedUserEdit} from "../../../state/actions";
 import {getUsers, createUser, createUserRole} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
@@ -29,7 +31,6 @@ const getRoleAlias = id => {
 
 const User = ({onClickEvent, prevEvent}) => {
   const [tableRef, setTableRef] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
   const tableStyle = {
     marginTop: "16px",
     boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
@@ -44,7 +45,10 @@ const User = ({onClickEvent, prevEvent}) => {
     {title: "Roles", field: "roles", filtering: false, sorting: false},
     {title: "Created At", field: "createdAt", filtering: false, sorting: false},
     {title: "Actions", render: rowData => (
-      <Button className="datatable-action-button" onClick={() => setSelectedUser(rowData)}>
+      <Button className="datatable-action-button" onClick={e => {
+        store.dispatch(setSelectedUserEdit(rowData));
+        onClickEvent({e, data: {id: "editUser"}});
+      }}>
         <i className="fas fa-user-cog"/>
       </Button>
     ), filtering: false, sorting: false}
@@ -251,6 +255,22 @@ export const CreateUserModal = ({onClickClose}) => {
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>
+    </React.Fragment>
+  )
+};
+
+export const EditUserModal = ({onClickClose}) => {
+  console.log(store.getState().reducerRouteUser);
+  return(
+    <React.Fragment>
+      <ModalHeader className="home-modal-header" tag="div">
+        <Translator id="userGroup.createNewUser"/>
+        <button className="close-button" onClick={onClickClose}>
+          <i className="fas fa-times"/>
+        </button>
+      </ModalHeader>
+      <ModalBody></ModalBody>
+      <ModalFooter></ModalFooter>
     </React.Fragment>
   )
 };
