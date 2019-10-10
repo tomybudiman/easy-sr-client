@@ -33,10 +33,9 @@ export const refreshTokenMethod = (token, verify = false) => {
       store.dispatch(setAuthToken(data.token));
       refreshTokenMethod(token);
     }).catch(err => {
+      NotificationManager.warning("Session timeout!");
       console.error(err);
-      if(err.response.status === 401){
-        logoutMethod();
-      }
+      logoutMethod();
     });
   };
   if(verify){

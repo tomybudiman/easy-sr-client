@@ -1,5 +1,7 @@
 {
   "warning": {
+    "networkError": "Network error",
+    "sessionTimeout": "Session timeout",
     "choseAnOption": "Please choose an option"
   },
   "commonGroup": {

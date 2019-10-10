@@ -8,9 +8,9 @@ import Cookies from "js-cookie";
 import "./app.scss";
 import "shards-ui/dist/css/shards.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-notifications/lib/notifications.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import {refreshTokenMethod} from "./Auth/fetch";
-import {setTokenVerified} from "../state/actions";
 import history from "../utils/history";
 import store from "../state";
 

@@ -1,9 +1,7 @@
 import axios from "axios";
-import get from "lodash/get";
-import {NotificationManager} from "react-notifications";
 
 import store from "../../../state";
-import {logoutMethod} from "../../Auth/fetch";
+import {handleError} from "../../../utils/utils";
 
 export const getSurveys = () => {
   const {authToken} = store.getState().reducerAuth;
@@ -14,14 +12,6 @@ export const getSurveys = () => {
       headers: {"Authorization": `Bearer ${authToken}`}
     }).then(({data}) => {
       resolve(data);
-    }).catch(err => {
-      console.error(err);
-      if(get(err, "response.status") === 401){
-        logoutMethod();
-      }else{
-        NotificationManager.error(get(err, "response.data.message") || "Network error!");
-        reject(err);
-      }
-    });
+    }).catch(err => handleError(err, reject));
   });
 };

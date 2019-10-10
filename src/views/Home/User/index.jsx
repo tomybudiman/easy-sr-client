@@ -179,7 +179,7 @@ export const CreateUserModal = ({onClickClose}) => {
           onClickClose("createUser");
         }
       }catch(err){
-
+        // console.log(err);
       }
     }
   };

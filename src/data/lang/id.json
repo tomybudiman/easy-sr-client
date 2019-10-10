@@ -1,5 +1,7 @@
 {
   "warning": {
+    "networkError": "Kesalahan jaringan",
+    "sessionTimeout": "Sesi berakhir",
     "choseAnOption": "Harap pilih pilihan"
   },
   "commonGroup": {
