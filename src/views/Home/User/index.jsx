@@ -264,7 +264,7 @@ export const EditUserModal = ({onClickClose}) => {
   return(
     <React.Fragment>
       <ModalHeader className="home-modal-header" tag="div">
-        <Translator id="userGroup.createNewUser"/>
+        <Translator id="userGroup.editUser"/>
         <button className="close-button" onClick={onClickClose}>
           <i className="fas fa-times"/>
         </button>

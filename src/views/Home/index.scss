@@ -1,6 +1,6 @@
 @import "../../assets/style/variables";
-@import "User/index";
 @import "Department/index";
+@import "User/index";
 
 $sidebarChildItemHeight: 48px;
 
@@ -319,7 +319,7 @@ $sidebarChildItemHeight: 48px;
 					color: $secondaryColor;
 				}
 			}
-			@media only screen and (max-width: $maxMobileSize) {
+			@media only screen and (max-width: $mobile) {
 				.body-footer-card {
 					flex-direction: column;
 					.lang-switcher {
@@ -337,7 +337,7 @@ $sidebarChildItemHeight: 48px;
 			filter: blur(2px);
 			-webkit-filter: blur(2px);
 		}
-		@media screen and (max-width: $maxTabletSize) {
+		@media screen and (max-width: $tablet) {
 			.sidebar {
 				position: absolute;
 			}
@@ -347,6 +347,20 @@ $sidebarChildItemHeight: 48px;
 					.copyright-text, .lang-switcher {
 						font-size: 12px;
 					}
+				}
+			}
+		}
+	}
+	@media only screen and (max-width: $mobile){
+		.appbar {
+			height: 56px;
+			padding: 0 16px;
+			.user-loggedin {
+				.user-loggedin-dialog {
+					top: 48px;
+				}
+				&:focus .user-loggedin-dialog {
+					top: 56px;
 				}
 			}
 		}
