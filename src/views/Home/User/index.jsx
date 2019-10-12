@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {
-  ModalBody, ModalHeader, ModalFooter, FormGroup, FormInput, FormSelect, FormCheckbox, Button as ButtonShards
+  ModalBody, ModalHeader, ModalFooter, FormGroup, FormFeedback, FormInput, FormCheckbox, Button as ButtonShards
 } from "shards-react";
-import MaterialTable, {MTableToolbar} from "material-table";
+import MaterialTable from "material-table";
 import Button from "@material-ui/core/Button";
 import {isEmpty} from "lodash/core";
 
@@ -54,15 +54,12 @@ const User = ({onClickEvent, prevEvent}) => {
     ), filtering: false, sorting: false}
   ];
   const tableComponents = {
-    Toolbar: props => (
-      <React.Fragment>
-        <MTableToolbar {...props}/>
-        <div className="user-datatable-toolbar">
-          <Button size="small" onClick={e => onClickEvent({e, data: {id: "createUser"}})}>
-            <Translator id="userGroup.createNewUser"/>
-          </Button>
-        </div>
-      </React.Fragment>
+    Toolbar: () => (
+      <div className="user-datatable-toolbar">
+        <Button size="small" onClick={e => onClickEvent({e, data: {id: "createUser"}})}>
+          <Translator id="userGroup.createNewUser"/>
+        </Button>
+      </div>
     )
   };
   const data = query => {
@@ -138,7 +135,11 @@ export const CreateUserModal = ({onClickClose}) => {
         updateFormStatus({...formStatus, role: {value: data, invalid: isEmpty(data)}});
         break;
       case "password":
-        updateFormStatus({...formStatus, password: {...formStatus.password, value: data, invalid: isEmpty(data)}});
+        const validatePassword = new RegExp("^(?=.*[a-z])(?=.*[0-9])(?=.{8,})");
+        updateFormStatus({
+          ...formStatus,
+          password: {...formStatus.password, value: data, invalid: !validatePassword.test(data)}
+        });
         break;
       default:
         break;
@@ -204,6 +205,11 @@ export const CreateUserModal = ({onClickClose}) => {
             id="input-new-user-fullname"
             invalid={formStatus.fullname.invalid}
             onChange={e => updateFormField(e.target.value, "fullname")}/>
+          {formStatus.fullname.invalid ? (
+            <FormFeedback tag="p" valid={false}>
+              <Translator id="warning.fieldEmptyInvalid"/>
+            </FormFeedback>
+          ) : null}
         </FormGroup>
         <FormGroup className="input-new-user-email">
           <label htmlFor="input-new-user-email">
@@ -213,6 +219,11 @@ export const CreateUserModal = ({onClickClose}) => {
             id="input-new-user-email"
             invalid={formStatus.email.invalid}
             onChange={e => updateFormField(e.target.value, "email")}/>
+          {formStatus.email.invalid ? (
+            <FormFeedback tag="p" valid={false}>
+              <Translator id="warning.emailInvalid"/>
+            </FormFeedback>
+          ) : null}
         </FormGroup>
         <FormGroup className="input-new-user-password">
           <label htmlFor="input-new-user-password">
@@ -228,11 +239,20 @@ export const CreateUserModal = ({onClickClose}) => {
               {formStatus.password.isPassword ? <i className="fas fa-eye"/> : <i className="fas fa-eye-slash"/>}
             </button>
           </div>
+          {formStatus.password.invalid ? (
+            <FormFeedback tag="p" valid={false}>
+              <Translator id="warning.passwordInvalid"/>
+            </FormFeedback>
+          ) : null}
         </FormGroup>
         <FormGroup className="input-new-user-role">
           <label>
             <Translator id="userGroup.role"/>
-            {formStatus.role.invalid ? <p className="error-msg"><Translator id="warning.choseAnOption"/></p> : null}
+            {formStatus.role.invalid ? (
+              <FormFeedback tag="p" valid={false}>
+                <Translator id="warning.choseAnOption"/>
+              </FormFeedback>
+            ) : null}
           </label>
           {Object.keys(roleCheckbox).map(each => {
             return(

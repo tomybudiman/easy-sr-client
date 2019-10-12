@@ -2,7 +2,10 @@
   "warning": {
     "networkError": "Kesalahan jaringan",
     "sessionTimeout": "Sesi berakhir",
-    "choseAnOption": "Harap pilih pilihan"
+    "emailInvalid": "Alamat surel tidak berlaku",
+    "choseAnOption": "Harap pilih pilihan",
+    "fieldEmptyInvalid": "Isian tidak diperbolehkan kosong",
+    "passwordInvalid": "Kata sandi harus memiliki panjang minimal 8 karakter & mengandung angka"
   },
   "commonGroup": {
     "save": "Simpan",

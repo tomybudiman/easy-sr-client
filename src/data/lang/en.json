@@ -2,7 +2,10 @@
   "warning": {
     "networkError": "Network error",
     "sessionTimeout": "Session timeout",
-    "choseAnOption": "Please choose an option"
+    "emailInvalid": "Invalid email address",
+    "choseAnOption": "Please choose an option",
+    "fieldEmptyInvalid": "Field cannot be empty",
+    "passwordInvalid": "Password must be at least 8 characters long & contain numbers"
   },
   "commonGroup": {
     "save": "Save",
