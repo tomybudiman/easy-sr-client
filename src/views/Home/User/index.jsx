@@ -116,12 +116,6 @@ export const CreateUserModal = ({onClickClose}) => {
   });
   const [mainButtonDisabled, setButtonDisabled] = useState(false);
   // Functions
-  const toggleRoleCheckbox = (id) => {
-    const newRoleCheckbox = {...roleCheckbox, [id]: {...roleCheckbox[id], value: !roleCheckbox[id].value}};
-    const filterCheckbox = Object.keys(roleCheckbox).filter(eachKey => newRoleCheckbox[eachKey].value !== false);
-    setRoleCheckbox(newRoleCheckbox);
-    updateFormField(filterCheckbox, "role");
-  };
   const updateFormField = (data, id) => {
     switch(id){
       case "fullname":
@@ -145,6 +139,12 @@ export const CreateUserModal = ({onClickClose}) => {
         break;
     }
   };
+  const toggleRoleChip = id => {
+    const newRoleCheckbox = {...roleCheckbox, [id]: {...roleCheckbox[id], value: !roleCheckbox[id].value}};
+    const filterCheckbox = Object.keys(roleCheckbox).filter(eachKey => newRoleCheckbox[eachKey].value !== false);
+    setRoleCheckbox(newRoleCheckbox);
+    updateFormField(filterCheckbox, "role");
+  };
   const togglePasswordView = () => {
     updateFormStatus({
       ...formStatus,
@@ -158,7 +158,7 @@ export const CreateUserModal = ({onClickClose}) => {
         ...tempFormStatus,
         [eachKey]: {
           ...tempFormStatus[eachKey],
-          invalid: tempFormStatus[eachKey].value === null
+          invalid: tempFormStatus[eachKey].value === null || tempFormStatus[eachKey].value.length === 0
         }
       };
       return isEmpty(tempFormStatus[eachKey].value) || tempFormStatus[eachKey].invalid
@@ -255,7 +255,10 @@ export const CreateUserModal = ({onClickClose}) => {
           <div className="custom-input-form">
             {Object.keys(roleCheckbox).map((each, i) => {
               return(
-                <div key={i} className="chip">
+                <div
+                  key={i}
+                  onClick={() => toggleRoleChip(each)}
+                  className={roleCheckbox[each].value ? "chip chip-active" : "chip"}>
                   <p className="label">{roleCheckbox[each].label}</p>
                 </div>
               )

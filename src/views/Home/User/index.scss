@@ -23,7 +23,31 @@
 			display: flex;
 			justify-content: space-between;
 			.chip {
+				width: 100%;
+				height: 40px;
 				display: flex;
+				cursor: pointer;
+				max-width: 140px;
+				border-radius: 20px;
+				align-items: center;
+				box-sizing: border-box;
+				justify-content: center;
+				transition-duration: 0.3s;
+				border: 2px solid $secondaryColor;
+				&:nth-child(2) {
+					margin: 0 16px;
+				}
+				p {
+					margin: 0;
+					font-size: 14px;
+					color: $secondaryColor;
+				}
+			}
+			.chip-active {
+				background-color: $secondaryColor;
+				p {
+					color: $lightColor;
+				}
 			}
 		}
 		.form-group .invalid-feedback {
