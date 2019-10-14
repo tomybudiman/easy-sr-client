@@ -1,8 +1,6 @@
 import React, {Fragment, useState} from "react";
 import {Router, Route, Redirect, Switch} from "react-router-dom";
 import {NotificationContainer} from "react-notifications";
-import {createMuiTheme} from "@material-ui/core/styles";
-import {ThemeProvider} from '@material-ui/styles';
 import Loadable from "react-loadable";
 import {Provider} from "react-redux";
 import Cookies from "js-cookie";
@@ -54,19 +52,17 @@ const App = () => {
   return(
     <Fragment>
       <NotificationContainer/>
-      <ThemeProvider theme={null}>
-        <Provider store={store}>
-          <Router history={history}>
-            <Switch>
-              <Route exact path="/" render={() => (
-                <Redirect to="/dashboard"/>
-              )}/>
-              <Route path="/dashboard" render={() => <ValidateAuthComponent Component={Home}/>}/>
-              <Route exact path="/auth" render={() => <ValidateAuthComponent Component={Auth}/>}/>
-            </Switch>
-          </Router>
-        </Provider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <Router history={history}>
+          <Switch>
+            <Route exact path="/" render={() => (
+              <Redirect to="/dashboard"/>
+            )}/>
+            <Route path="/dashboard" render={() => <ValidateAuthComponent Component={Home}/>}/>
+            <Route exact path="/auth" render={() => <ValidateAuthComponent Component={Auth}/>}/>
+          </Switch>
+        </Router>
+      </Provider>
     </Fragment>
   )
 };

@@ -19,6 +19,13 @@
 				background-color: transparent;
 			}
 		}
+		.input-new-user-role .custom-input-form {
+			display: flex;
+			justify-content: space-between;
+			.chip {
+				display: flex;
+			}
+		}
 		.form-group .invalid-feedback {
 			display: block;
 			margin-bottom: 0;

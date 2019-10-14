@@ -252,17 +252,15 @@ export const CreateUserModal = ({onClickClose}) => {
               </FormFeedback>
             ) : null}
           </label>
-          {Object.keys(roleCheckbox).map(each => {
-            return(
-              <FormCheckbox
-                key={each}
-                className="custom-checkbox"
-                checked={roleCheckbox[each].value}
-                onChange={() => toggleRoleCheckbox(each)}>
-                {roleCheckbox[each].label}
-              </FormCheckbox>
-            )
-          })}
+          <div className="custom-input-form">
+            {Object.keys(roleCheckbox).map((each, i) => {
+              return(
+                <div key={i} className="chip">
+                  <p className="label">{roleCheckbox[each].label}</p>
+                </div>
+              )
+            })}
+          </div>
         </FormGroup>
       </ModalBody>
       <ModalFooter>
