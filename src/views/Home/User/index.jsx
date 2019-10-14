@@ -128,7 +128,7 @@ export const CreateUserModal = ({onClickClose}) => {
         updateFormStatus({...formStatus, fullname: {value: data, invalid: isEmpty(data)}});
         break;
       case "email":
-        const mailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+        const mailRegex = new RegExp(/^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
         updateFormStatus({...formStatus, email: {value: data, invalid: !mailRegex.test(data)}});
         break;
       case "role":
@@ -161,9 +161,7 @@ export const CreateUserModal = ({onClickClose}) => {
           invalid: tempFormStatus[eachKey].value === null
         }
       };
-      if(isEmpty(tempFormStatus[eachKey].value) || tempFormStatus[eachKey].invalid){
-        return eachKey
-      }
+      return isEmpty(tempFormStatus[eachKey].value) || tempFormStatus[eachKey].invalid
     }).length === 0;
     updateFormStatus(tempFormStatus);
     if(isFormValid){

@@ -34,7 +34,7 @@ const SurveyDisclosure = Loadable({
   loading: () => <React.Fragment/>,
 });
 
-const rootRoute = history.location.pathname.match(/^\/[^\/]+/)[0];
+const rootRoute = history.location.pathname.match(/^\/[^]+/)[0];
 
 // Core Components
 const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
