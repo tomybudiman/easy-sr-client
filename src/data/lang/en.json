@@ -12,6 +12,10 @@
     "create": "Create",
     "add": "Add",
     "logout": "Logout",
+    "locked": "Locked",
+    "active": "Active",
+    "inactive": "Inactive",
+    "unlocked": "Unlocked",
     "language": "Language",
     "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
@@ -25,6 +29,7 @@
     "userList": "User List",
     "fullname": "Full Name",
     "createNew": "Create New",
+    "toggleLock": "Toggle Lock",
     "editUser": "Edit User",
     "createNewUser": "Create New User"
   },

@@ -1,15 +1,15 @@
 import React, {useState} from "react";
 import {
-  ModalBody, ModalHeader, ModalFooter, FormGroup, FormFeedback, FormInput, FormCheckbox, Button as ButtonShards
+  ModalBody, ModalHeader, ModalFooter, FormGroup, FormFeedback, FormInput, Button as ButtonShards
 } from "shards-react";
 import MaterialTable from "material-table";
 import Button from "@material-ui/core/Button";
-import {isEmpty} from "lodash/core";
+import {isEmpty, get} from "lodash";
 
 import store from "../../../state";
 import Translator from "../../../components/Translator";
 import {setSelectedUserEdit} from "../../../state/actions";
-import {getUsers, createUser, createUserRole} from "./fetch";
+import {getUsers, createUser, createUserRole, toggleLockUser} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const getRoleAlias = id => {
@@ -40,18 +40,20 @@ const User = ({onClickEvent, prevEvent}) => {
     search: false
   };
   const tableColumns = [
-    {title: "Fullname", field: "fullname", filtering: false, sorting: false},
-    {title: "Email", field: "email", filtering: false, sorting: false},
-    {title: "Roles", field: "roles", filtering: false, sorting: false},
-    {title: "Created At", field: "createdAt", filtering: false, sorting: false},
-    {title: "Actions", render: rowData => (
-      <Button className="datatable-action-button" onClick={e => {
-        store.dispatch(setSelectedUserEdit(rowData));
-        onClickEvent({e, data: {id: "editUser"}});
-      }}>
-        <i className="fas fa-user-cog"/>
-      </Button>
-    ), filtering: false, sorting: false}
+    {title: "Fullname", filtering: false, sorting: false, render: ({formatted}) => formatted.fullname},
+    {title: "Email", filtering: false, sorting: false, render: ({formatted}) => formatted.email},
+    {title: "Roles", filtering: false, sorting: false, render: ({formatted}) => formatted.roles},
+    {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => formatted.createdAt},
+    {title: "Actions", render: ({raw}) => {
+      return(
+        <Button className="datatable-action-button" onClick={e => {
+          store.dispatch(setSelectedUserEdit(raw));
+          onClickEvent({e, data: {id: "editUser"}});
+        }}>
+          <i className="fas fa-user-cog"/>
+        </Button>
+      )
+    }, filtering: false, sorting: false}
   ];
   const tableComponents = {
     Toolbar: () => (
@@ -65,17 +67,19 @@ const User = ({onClickEvent, prevEvent}) => {
   const data = query => {
     return new Promise(resolve => {
       getUsers().then(res => {
-        const formattedData = res.rows.map(each => {
-          return {
-            fullname: each.fullname,
-            email: each.email,
-            roles: each.roles.map(eachRole => getRoleAlias(eachRole.name)).join(", "),
-            department: "Whatever",
-            createdAt: each.createdAt
-          }
-        });
         resolve({
-          data: formattedData,
+          data: res.rows.map(each => {
+            return {
+              raw: each,
+              formatted: {
+                fullname: each.fullname,
+                email: each.email,
+                roles: each.roles.map(eachRole => getRoleAlias(eachRole.name)).join(", "),
+                department: "Whatever",
+                createdAt: each.createdAt
+              }
+            };
+          }),
           page: res.page - 1,
           totalCount: res.count
         });
@@ -102,8 +106,72 @@ const User = ({onClickEvent, prevEvent}) => {
   )
 };
 
+export const EditUserModal = ({onClickClose}) => {
+  const {roles, is_locked} = store.getState().reducerRouteUser.selectedUserEdit;
+  const assignedRoles = roles.reduce((prevObj, {name}) => ({
+    ...prevObj, [name]: {label: get(prevObj, `[${name}].label`) || "Superadmin", value: true}
+  }), {
+    org_admin: {label: "Admin", value: false},
+    org_developer: {label: "Developer", value: false},
+    org_viewer: {label: "Viewer", value: false}
+  });
+  const [isUserLocked, setUserLock] = useState(is_locked);
+  const [roleInput, setRoleInput] = useState(assignedRoles);
+  const isSuperadmin = !roleInput.hasOwnProperty("superadmin");
+  const toggleRoleChip = id => {};
+  const toggleLockSwicth = () => {
+    setUserLock(!isUserLocked);
+    // toggleLockUser()
+  };
+  return(
+    <React.Fragment>
+      <ModalHeader className="home-modal-header" tag="div">
+        <Translator id="userGroup.editUser"/>
+        <button className="close-button" onClick={onClickClose}>
+          <i className="fas fa-times"/>
+        </button>
+      </ModalHeader>
+      <ModalBody className="edit-user">
+        {isSuperadmin ? (
+          <FormGroup className="input-toggle-user-lock">
+            <label>
+              <Translator id="userGroup.toggleLock"/>
+            </label>
+            <div className="toggle-swicth-lock-user">
+              <input type="checkbox" checked={!isUserLocked} onChange={toggleLockSwicth}/>
+              <label>
+                <p id="unlocked-user-label"><Translator id="commonGroup.locked"/></p>
+                <p id="unlocked-user-label"><Translator id="commonGroup.active"/></p>
+              </label>
+              <span className="overlay-transition"/>
+              <span className="overlay-background"/>
+            </div>
+          </FormGroup>
+        ) : null}
+        <FormGroup className="input-edit-user-role">
+          <label>
+            <Translator id="userGroup.role"/>
+          </label>
+          <div className="custom-input-form">
+            {Object.keys(roleInput).map((each, i) => {
+              return(
+                <div
+                  key={i}
+                  onClick={() => toggleRoleChip(each)}
+                  className={roleInput[each].value ? "chip chip-active" : "chip"}>
+                  <p className="label">{roleInput[each].label}</p>
+                </div>
+              )
+            })}
+          </div>
+        </FormGroup>
+      </ModalBody>
+    </React.Fragment>
+  )
+};
+
 export const CreateUserModal = ({onClickClose}) => {
-  const [roleCheckbox, setRoleCheckbox] = useState({
+  const [roleInput, setRoleInput] = useState({
     org_admin: {label: "Admin", value: false},
     org_developer: {label: "Developer", value: false},
     org_viewer: {label: "Viewer", value: false}
@@ -140,9 +208,9 @@ export const CreateUserModal = ({onClickClose}) => {
     }
   };
   const toggleRoleChip = id => {
-    const newRoleCheckbox = {...roleCheckbox, [id]: {...roleCheckbox[id], value: !roleCheckbox[id].value}};
-    const filterCheckbox = Object.keys(roleCheckbox).filter(eachKey => newRoleCheckbox[eachKey].value !== false);
-    setRoleCheckbox(newRoleCheckbox);
+    const newroleInput = {...roleInput, [id]: {...roleInput[id], value: !roleInput[id].value}};
+    const filterCheckbox = Object.keys(roleInput).filter(eachKey => newroleInput[eachKey].value !== false);
+    setRoleInput(newroleInput);
     updateFormField(filterCheckbox, "role");
   };
   const togglePasswordView = () => {
@@ -166,7 +234,7 @@ export const CreateUserModal = ({onClickClose}) => {
     updateFormStatus(tempFormStatus);
     if(isFormValid){
       setButtonDisabled(true);
-      const selectedNewRole = Object.keys(roleCheckbox).filter(each => roleCheckbox[each].value);
+      const selectedNewRole = Object.keys(roleInput).filter(each => roleInput[each].value);
       try{
         const creatingUser = await createUser({
           email: formStatus.email.value,
@@ -253,13 +321,13 @@ export const CreateUserModal = ({onClickClose}) => {
             ) : null}
           </label>
           <div className="custom-input-form">
-            {Object.keys(roleCheckbox).map((each, i) => {
+            {Object.keys(roleInput).map((each, i) => {
               return(
                 <div
                   key={i}
                   onClick={() => toggleRoleChip(each)}
-                  className={roleCheckbox[each].value ? "chip chip-active" : "chip"}>
-                  <p className="label">{roleCheckbox[each].label}</p>
+                  className={roleInput[each].value ? "chip chip-active" : "chip"}>
+                  <p className="label">{roleInput[each].label}</p>
                 </div>
               )
             })}
@@ -274,22 +342,6 @@ export const CreateUserModal = ({onClickClose}) => {
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>
-    </React.Fragment>
-  )
-};
-
-export const EditUserModal = ({onClickClose}) => {
-  console.log(store.getState().reducerRouteUser);
-  return(
-    <React.Fragment>
-      <ModalHeader className="home-modal-header" tag="div">
-        <Translator id="userGroup.editUser"/>
-        <button className="close-button" onClick={onClickClose}>
-          <i className="fas fa-times"/>
-        </button>
-      </ModalHeader>
-      <ModalBody></ModalBody>
-      <ModalFooter></ModalFooter>
     </React.Fragment>
   )
 };

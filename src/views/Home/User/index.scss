@@ -1,5 +1,39 @@
 @import "../../../assets/style/variables";
 
+@mixin user-role-chip {
+	.chip {
+		width: 100%;
+		height: 40px;
+		display: flex;
+		margin: 0 8px;
+		cursor: pointer;
+		max-width: 140px;
+		border-radius: 20px;
+		align-items: center;
+		box-sizing: border-box;
+		justify-content: center;
+		transition-duration: 0.3s;
+		border: 2px solid $secondaryColor;
+		&:first-child {
+			margin-left: 0;
+		}
+		&:last-child {
+			margin-right: 0;
+		}
+		p {
+			margin: 0;
+			font-size: 14px;
+			color: $secondaryColor;
+		}
+	}
+	.chip-active {
+		background-color: $secondaryColor;
+		p {
+			color: $lightColor;
+		}
+	}
+}
+
 @mixin create-new-user {
 	.create-new-user {
 		.password-container {
@@ -22,37 +56,123 @@
 		.input-new-user-role .custom-input-form {
 			display: flex;
 			justify-content: space-between;
-			.chip {
-				width: 100%;
-				height: 40px;
-				display: flex;
-				cursor: pointer;
-				max-width: 140px;
-				border-radius: 20px;
-				align-items: center;
-				box-sizing: border-box;
-				justify-content: center;
-				transition-duration: 0.3s;
-				border: 2px solid $secondaryColor;
-				&:nth-child(2) {
-					margin: 0 16px;
-				}
-				p {
-					margin: 0;
-					font-size: 14px;
-					color: $secondaryColor;
-				}
-			}
-			.chip-active {
-				background-color: $secondaryColor;
-				p {
-					color: $lightColor;
-				}
-			}
+			@include user-role-chip;
 		}
 		.form-group .invalid-feedback {
 			display: block;
 			margin-bottom: 0;
+		}
+	}
+}
+
+@mixin edit-user {
+	.edit-user {
+		.input-toggle-user-lock .toggle-swicth-lock-user {
+			$border-radius: 8px;
+			$transition-duration: 500ms;
+			width: 200px;
+			height: 40px;
+			overflow: hidden;
+			position: relative;
+			border-radius: $border-radius;
+			box-shadow: rgba(17, 31, 93, 0.08) 3px 0 30px, rgba(27, 27, 43, 0.09) 2px 0 5px;
+			input[type="checkbox"] {
+				z-index: 3;
+				width: 100%;
+				height: 100%;
+				outline: none;
+				cursor: pointer;
+				appearance: none;
+				position: relative;
+				background-color: transparent;
+			}
+			// Checked
+			input[type="checkbox"]:checked ~ label p {
+				color: $lightColor;
+				&:first-child {
+					color: $secondaryColor;
+				}
+			}
+			input[type="checkbox"]:checked ~ .overlay-transition {
+				left: -100%;
+				background-color: $secondaryColor;
+				animation: switch-checked-overlay $transition-duration;
+			}
+			input[type="checkbox"]:checked ~ .overlay-background {
+				background-color: $secondaryColor;
+				transition-delay: $transition-duration;
+			}
+			// Unchecked
+			input[type="checkbox"]:not(:checked) ~ label p {
+				color: $secondaryColor;
+				&:last-child {
+					color: $lightColor;
+				}
+			}
+			input[type="checkbox"]:not(:checked) ~ .overlay-transition {
+				right: -100%;
+				background-color: $lightColor;
+				animation: switch-unchecked-overlay $transition-duration;
+			}
+			input[type="checkbox"]:not(:checked) ~ .overlay-background {
+				background-color: $lightColor;
+				transition-delay: $transition-duration;
+			}
+			label {
+				top: 0;
+				left: 0;
+				margin: 0;
+				z-index: 2;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				position: absolute;
+				align-items: center;
+				transition-delay: 10s;
+				justify-content: space-between;
+				p {
+					margin: 0;
+					position: absolute;
+					&:first-child {
+						left: 16px;
+					}
+					&:last-child {
+						right: 16px;
+					}
+				}
+			}
+			@keyframes switch-checked-overlay {
+				0% {transform: translateX(0);}
+				100% {transform: translateX(100%);}
+			}
+			@keyframes switch-unchecked-overlay {
+				0% {transform: translateX(0);}
+				100% {transform: translateX(-100%);}
+			}
+			.overlay-transition {
+				top: 0;
+				z-index: 1;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				border-radius: $border-radius;
+				animation-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+			}
+			.overlay-background {
+				top: 0;
+				left: 0;
+				z-index: 0;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				background-color: red;
+				border-radius: $border-radius;
+			}
+		}
+		.input-edit-user-role .custom-input-form {
+			display: flex;
+			justify-content: space-between;
+			@include user-role-chip;
 		}
 	}
 }

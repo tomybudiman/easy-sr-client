@@ -12,6 +12,10 @@
     "create": "Buat",
     "add": "Tambah",
     "logout": "Keluar",
+    "locked": "Terkunci",
+    "active": "Aktif",
+    "inactive": "Tidak Aktif",
+    "unlocked": "Aktif",
     "language": "Bahasa",
     "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
@@ -25,6 +29,7 @@
     "userList": "Daftar Pengguna",
     "fullname": "Nama Lengkap",
     "createNew": "Buat Baru",
+    "toggleLock": "Ubah Penguncian",
     "editUser": "Konfigurasi Pengguna",
     "createNewUser": "Buat Pengguna Baru"
   },

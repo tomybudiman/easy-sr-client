@@ -5,6 +5,7 @@
 $sidebarChildItemHeight: 48px;
 
 .home-modal {
+	@include edit-user;
 	@include create-new-user;
 }
 
