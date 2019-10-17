@@ -38,7 +38,7 @@ $sidebarChildItemHeight: 48px;
 				}
 			}
 			.selector-container {
-				height: 44px;
+				height: 48px;
 				padding: 6px;
 				display: flex;
 				cursor: pointer;
@@ -51,10 +51,10 @@ $sidebarChildItemHeight: 48px;
 					cursor: pointer;
 				}
 				.user-logo-text {
-					width: 32px;
-					height: 32px;
+					width: 36px;
+					height: 36px;
 					display: flex;
-					margin-right: 8px;
+					margin-right: 12px;
 					border-radius: 50%;
 					align-items: center;
 					color: $secondaryColor;
@@ -68,23 +68,35 @@ $sidebarChildItemHeight: 48px;
 				}
 				.user-identity {
 					display: flex;
-					flex-wrap: nowrap;
-					align-items: center;
+					margin-right: 12px;
+					flex-direction: column;
+					justify-content: center;
 					p {
-						margin: 0 8px 0 0;
+						margin: 0;
+						font-size: 16px;
 						color: $lightColor;
 					}
-					button {
-						padding: 0;
-						border: none;
-						outline: none;
-						display: flex;
-						margin: 0 8px 0 0;
-						flex-wrap: nowrap;
-						color: $lightColor;
-						align-items: center;
-						background-color: transparent;
+				}
+				.superadmin-role p {
+					&:first-child {
+						font-size: 16px;
+						line-height: 18px;
 					}
+					&:last-child {
+						font-size: 12px;
+					}
+				}
+				button {
+					padding: 0;
+					border: none;
+					outline: none;
+					display: flex;
+					font-size: 20px;
+					margin: 0 8px 0 0;
+					flex-wrap: nowrap;
+					color: $lightColor;
+					align-items: center;
+					background-color: transparent;
 				}
 			}
 			.user-loggedin-dialog {

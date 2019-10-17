@@ -137,7 +137,10 @@ const HomeModal = ({homeModal, toggleModal}) => {
 };
 
 const Home = () => {
-  const user = get(store.getState().reducerAuth, "userTokenData.user") || {};
+  const user = {
+    ...get(store.getState().reducerAuth, "userTokenData.user") || {},
+    roles: get(store.getState().reducerAuth, "userTokenData.roles") || []
+  };
   const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
@@ -145,6 +148,8 @@ const Home = () => {
   });
   const [homeModal, setHomeModal] = useState({state: false, id: null});
   const [prevEvent, setNewEvent] = useState(null);
+  const isSuperadmin = user.roles.includes("superadmin");
+  // Methods
   const openHomeModal = ({data}) => {
     const allowedModalId = ["createUser", "editUser", "createDepartment"];
     if(allowedModalId.includes(data.id)){
@@ -190,12 +195,13 @@ const Home = () => {
               <div className="user-logo-text">
                 <p>{getSimpleName()}</p>
               </div>
-              <div className="user-identity">
+              <div className={isSuperadmin ? "user-identity superadmin-role" : "user-identity"}>
                 <p>{user.fullname}</p>
-                <button>
-                  <i className="fas fa-angle-down"/>
-                </button>
+                {isSuperadmin ? <p>Superadmin</p> : null}
               </div>
+              <button>
+                <i className="fas fa-angle-down"/>
+              </button>
             </div>
             <div className="user-loggedin-dialog">
               <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
