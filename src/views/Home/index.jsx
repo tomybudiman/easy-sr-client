@@ -34,7 +34,7 @@ const SurveyDisclosure = Loadable({
   loading: () => <React.Fragment/>,
 });
 
-const rootRoute = history.location.pathname.match(/^\/[^\/]+/)[0];
+const rootRoute = history.location.pathname.match(/^\/[^/]+/)[0];
 
 // Core Components
 const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
@@ -60,8 +60,8 @@ const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
         <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
           {data.child.map((each, i) => {
             if(each.path){
-              return (
-                <Link to={rootRoute+each.path} key={i} onClick={e => onClick({e, data: each})}>
+              return(
+                <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i} onClick={e => onClick({e, data: each})}>
                   <SidebarItem data={each}/>
                 </Link>
               )
@@ -91,7 +91,7 @@ const SidebarContent = ({visible, onClickSidebar}) => {
       {sidebar.map((each, i) => {
         if(each.path){
           return(
-            <Link to={rootRoute+each.path} key={i}>
+            <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i}>
               <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
             </Link>
           )
@@ -130,7 +130,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
     }
   };
   return(
-    <Modal open={homeModal.state} toggle={toggleModal} className="home-modal" size={modalSize}>
+    <Modal open={homeModal.state} toggle={() => null} className="home-modal" size={modalSize}>
       <RenderComponent/>
     </Modal>
   )

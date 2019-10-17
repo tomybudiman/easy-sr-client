@@ -1,14 +1,25 @@
 {
+  "success": {
+    "success": "Berhasil"
+  },
   "warning": {
     "networkError": "Kesalahan jaringan",
     "sessionTimeout": "Sesi berakhir",
-    "choseAnOption": "Harap pilih pilihan"
+    "emailInvalid": "Alamat surel tidak berlaku",
+    "choseAnOption": "Harap pilih pilihan",
+    "fieldEmptyInvalid": "Isian tidak diperbolehkan kosong",
+    "actionProhibited": "Tindakan Dilarang",
+    "passwordInvalid": "Kata sandi harus memiliki panjang minimal 8 karakter & mengandung angka"
   },
   "commonGroup": {
     "save": "Simpan",
     "create": "Buat",
     "add": "Tambah",
     "logout": "Keluar",
+    "locked": "Terkunci",
+    "active": "Aktif",
+    "inactive": "Tidak Aktif",
+    "unlocked": "Aktif",
     "language": "Bahasa",
     "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
@@ -22,6 +33,7 @@
     "userList": "Daftar Pengguna",
     "fullname": "Nama Lengkap",
     "createNew": "Buat Baru",
+    "toggleLock": "Ubah Penguncian",
     "editUser": "Konfigurasi Pengguna",
     "createNewUser": "Buat Pengguna Baru"
   },

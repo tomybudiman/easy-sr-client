@@ -1,7 +1,7 @@
 import React, {Fragment, useState} from "react";
-import Loadable from "react-loadable";
 import {Router, Route, Redirect, Switch} from "react-router-dom";
 import {NotificationContainer} from "react-notifications";
+import Loadable from "react-loadable";
 import {Provider} from "react-redux";
 import Cookies from "js-cookie";
 

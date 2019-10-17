@@ -1,14 +1,25 @@
 {
+  "success": {
+    "success": "Success"
+  },
   "warning": {
     "networkError": "Network error",
     "sessionTimeout": "Session timeout",
-    "choseAnOption": "Please choose an option"
+    "emailInvalid": "Invalid email address",
+    "choseAnOption": "Please choose an option",
+    "fieldEmptyInvalid": "Field cannot be empty",
+    "actionProhibited": "Action Prohibited",
+    "passwordInvalid": "Password must be at least 8 characters long & contain numbers"
   },
   "commonGroup": {
     "save": "Save",
     "create": "Create",
     "add": "Add",
     "logout": "Logout",
+    "locked": "Locked",
+    "active": "Active",
+    "inactive": "Inactive",
+    "unlocked": "Unlocked",
     "language": "Language",
     "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
@@ -22,6 +33,7 @@
     "userList": "User List",
     "fullname": "Full Name",
     "createNew": "Create New",
+    "toggleLock": "Toggle Lock",
     "editUser": "Edit User",
     "createNewUser": "Create New User"
   },

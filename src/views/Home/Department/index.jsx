@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import MaterialTable, {MTableToolbar} from "material-table";
+import MaterialTable from "material-table";
 import {FormGroup, FormInput, ModalBody, ModalFooter, ModalHeader, Button as ButtonShards} from "shards-react";
 
 import Translator from "../../../components/Translator";
@@ -20,15 +20,12 @@ const Department = ({onClickEvent}) => {
     {title: "ID", field: "id", filtering: false, sorting: false}
   ];
   const tableComponents = {
-    Toolbar: props => (
-      <React.Fragment>
-        <MTableToolbar {...props}/>
-        <div className="department-datatable-toolbar">
-          <Button size="small" onClick={e => onClickEvent({e, data: {id: "createDepartment"}})}>
-            <Translator id="departmentGroup.createNewDepartment"/>
-          </Button>
-        </div>
-      </React.Fragment>
+    Toolbar: () => (
+      <div className="department-datatable-toolbar">
+        <Button size="small" onClick={e => onClickEvent({e, data: {id: "createDepartment"}})}>
+          <Translator id="departmentGroup.createNewDepartment"/>
+        </Button>
+      </div>
     )
   };
   return(

@@ -11,3 +11,15 @@ $darkColor: #212529;
 
 $maxMobileSize: 425px;
 $maxTabletSize: 768px;
+
+$mobile: 425px;
+$tablet: 768px;
+$desktop-sm: 1024px;
+$desktop-lg: 1440px;
+
+:export {
+	mobile: $mobile;
+	tablet: $tablet;
+	desktopSm: $desktop-sm;
+	desktopLg: $desktop-lg;
+}
