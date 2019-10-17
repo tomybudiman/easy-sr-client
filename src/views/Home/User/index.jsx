@@ -13,6 +13,7 @@ import Translator, {localeData} from "../../../components/Translator";
 import {setSelectedUserEdit} from "../../../state/actions";
 import {getUsers, createUser, updateUserRole, toggleLockUser} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
+import moment from "moment";
 
 const getRoleAlias = id => {
   switch(id){
@@ -85,7 +86,9 @@ class User extends Component {
       {title: "Fullname", filtering: false, sorting: false, render: ({formatted}) => formatted.fullname},
       {title: "Email", filtering: false, sorting: false, render: ({formatted}) => formatted.email},
       {title: "Roles", filtering: false, sorting: false, render: ({formatted}) => formatted.roles},
-      {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => formatted.createdAt},
+      {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => {
+        return moment(formatted.createdAt).format("DD MMMM YYYY HH:mm");
+      }},
       {title: "Actions", render: ({raw}) => {
         return(
           <Button className="datatable-action-button" onClick={e => {
