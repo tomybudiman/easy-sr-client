@@ -1,19 +1,15 @@
-import {useState} from "react";
+import {connect} from "react-redux";
 import {get} from "lodash";
 
-import store from "../../state";
 import id from "../../data/lang/id";
 import en from "../../data/lang/en";
 
-const localeData = {id, en};
+export const localeData = {id, en};
 
-const Translator = (id) => {
-  const newId = typeof id === "string" ? id : id.id;
-  const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
-  store.subscribe(() => {
-    setActiveLocale(store.getState().reducerLocale.locale);
-  });
-  return get(localeData[activeLocale], newId) || newId;
+const Translator = (props) => {
+  return get(localeData[props.locale], props.id) || props.id;
 };
 
-export default Translator
+export default connect(state => ({
+  locale: state.reducerLocale.locale
+}), null)(Translator);

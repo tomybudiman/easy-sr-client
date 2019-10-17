@@ -1,15 +1,17 @@
-import React, {useState} from "react";
+import React, {Component, useState} from "react";
 import {
   ModalBody, ModalHeader, ModalFooter, FormGroup, FormFeedback, FormInput, Button as ButtonShards
 } from "shards-react";
-import MaterialTable from "material-table";
+import {isEmpty, get, difference} from "lodash";
+import {NotificationManager} from "react-notifications";
 import Button from "@material-ui/core/Button";
-import {isEmpty, get} from "lodash";
+import MaterialTable from "material-table";
+import uuid from "uuidv4";
 
 import store from "../../../state";
-import Translator from "../../../components/Translator";
+import Translator, {localeData} from "../../../components/Translator";
 import {setSelectedUserEdit} from "../../../state/actions";
-import {getUsers, createUser, createUserRole, toggleLockUser} from "./fetch";
+import {getUsers, createUser, updateUserRole, toggleLockUser} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
 const getRoleAlias = id => {
@@ -29,42 +31,12 @@ const getRoleAlias = id => {
   }
 };
 
-const User = ({onClickEvent, prevEvent}) => {
-  const [tableRef, setTableRef] = useState(null);
-  const tableStyle = {
-    marginTop: "16px",
-    boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
-  };
-  const tableOptions = {
-    showTitle: false,
-    search: false
-  };
-  const tableColumns = [
-    {title: "Fullname", filtering: false, sorting: false, render: ({formatted}) => formatted.fullname},
-    {title: "Email", filtering: false, sorting: false, render: ({formatted}) => formatted.email},
-    {title: "Roles", filtering: false, sorting: false, render: ({formatted}) => formatted.roles},
-    {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => formatted.createdAt},
-    {title: "Actions", render: ({raw}) => {
-      return(
-        <Button className="datatable-action-button" onClick={e => {
-          store.dispatch(setSelectedUserEdit(raw));
-          onClickEvent({e, data: {id: "editUser"}});
-        }}>
-          <i className="fas fa-user-cog"/>
-        </Button>
-      )
-    }, filtering: false, sorting: false}
-  ];
-  const tableComponents = {
-    Toolbar: () => (
-      <div className="user-datatable-toolbar">
-        <Button size="small" onClick={e => onClickEvent({e, data: {id: "createUser"}})}>
-          <Translator id="userGroup.createNewUser"/>
-        </Button>
-      </div>
-    )
-  };
-  const data = query => {
+class User extends Component {
+  constructor(props){
+    super(props);
+    this.tableRef = null;
+  }
+  data(query){
     return new Promise(resolve => {
       getUsers().then(res => {
         resolve({
@@ -86,28 +58,74 @@ const User = ({onClickEvent, prevEvent}) => {
       });
     });
   };
-  // INCOMING EVENT
-  if(prevEvent === "createUser"){
-    setTimeout(tableRef.onQueryChange, 0);
+  // Component Lifecycle
+  componentDidUpdate(prevProps){
+    if(get(prevProps, "prevEvent.uid") !== get(this.props, "prevEvent.uid")){
+      switch(get(this.props, "prevEvent.type")){
+        case "createUser":
+        case "editUser":
+          setTimeout(this.tableRef.onQueryChange, 0);
+          break;
+        default:
+          break;
+      }
+    }
   }
-  return(
-    <React.Fragment>
-      <PageRouteHeader>
-        <Translator id="userGroup.user"/>
-      </PageRouteHeader>
-      <MaterialTable
-        data={data}
-        style={tableStyle}
-        columns={tableColumns}
-        options={tableOptions}
-        components={tableComponents}
-        tableRef={e => setTableRef(e)}/>
-    </React.Fragment>
-  )
-};
+  render(){
+    const {onClickEvent} = this.props;
+    const tableStyle = {
+      marginTop: "16px",
+      boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
+    };
+    const tableOptions = {
+      showTitle: false,
+      search: false
+    };
+    const tableColumns = [
+      {title: "Fullname", filtering: false, sorting: false, render: ({formatted}) => formatted.fullname},
+      {title: "Email", filtering: false, sorting: false, render: ({formatted}) => formatted.email},
+      {title: "Roles", filtering: false, sorting: false, render: ({formatted}) => formatted.roles},
+      {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => formatted.createdAt},
+      {title: "Actions", render: ({raw}) => {
+        return(
+          <Button className="datatable-action-button" onClick={e => {
+            store.dispatch(setSelectedUserEdit(raw));
+            onClickEvent({e, data: {id: "editUser"}});
+          }}>
+            <i className="fas fa-user-cog"/>
+          </Button>
+        )
+      }, filtering: false, sorting: false}
+    ];
+    const tableComponents = {
+      Toolbar: () => (
+        <div className="user-datatable-toolbar">
+          <Button size="small" onClick={e => onClickEvent({e, data: {id: "createUser"}})}>
+            <Translator id="userGroup.createNewUser"/>
+          </Button>
+        </div>
+      )
+    };
+    // return null
+    return(
+      <React.Fragment>
+        <PageRouteHeader>
+          <Translator id="userGroup.user"/>
+        </PageRouteHeader>
+        <MaterialTable
+          data={q => this.data(q)}
+          style={tableStyle}
+          columns={tableColumns}
+          options={tableOptions}
+          components={tableComponents}
+          tableRef={e => this.tableRef = e}/>
+      </React.Fragment>
+    )
+  }
+}
 
 export const EditUserModal = ({onClickClose}) => {
-  const {roles, is_locked} = store.getState().reducerRouteUser.selectedUserEdit;
+  const {id, roles, is_locked} = store.getState().reducerRouteUser.selectedUserEdit;
   const assignedRoles = roles.reduce((prevObj, {name}) => ({
     ...prevObj, [name]: {label: get(prevObj, `[${name}].label`) || "Superadmin", value: true}
   }), {
@@ -117,22 +135,57 @@ export const EditUserModal = ({onClickClose}) => {
   });
   const [isUserLocked, setUserLock] = useState(is_locked);
   const [roleInput, setRoleInput] = useState(assignedRoles);
-  const isSuperadmin = !roleInput.hasOwnProperty("superadmin");
-  const toggleRoleChip = id => {};
+  const [isUpdatingRoles, setUpdateStatus] = useState(false);
+  const isSuperadmin = roleInput.hasOwnProperty("superadmin");
+  // Methods
+  const toggleRoleChip = roleId => {
+    const baseObj = {...roleInput, [roleId]: {...roleInput[roleId], value: !roleInput[roleId].value}};
+    setRoleInput(baseObj);
+    if(isSuperadmin){
+      setTimeout(() => {
+        setRoleInput({...roleInput, [roleId]: {...roleInput[roleId], value: !baseObj[roleId].value}});
+        NotificationManager.warning(get(localeData[store.getState().reducerLocale.locale], "warning.actionProhibited"));
+      }, 300);
+    }else{
+      if(!isUpdatingRoles){
+        const oldArrRoles = Object.keys(roleInput).filter(key => roleInput[key].value);
+        const newArrRoles = Object.keys(baseObj).filter(key => baseObj[key].value);
+        const addedRoles = difference(newArrRoles, oldArrRoles);
+        const removedRoles = difference(oldArrRoles, newArrRoles);
+        setUpdateStatus(true);
+        updateUserRole({
+          user_id: id,
+          roles: addedRoles.length > 0 ? addedRoles : removedRoles
+        }, addedRoles.length > 0).then(() => {
+          NotificationManager.success(get(localeData[store.getState().reducerLocale.locale], "success.success"));
+        }).finally(() => setUpdateStatus(false));
+      }else{
+        setTimeout(() => {
+          setRoleInput({...roleInput, [roleId]: {...roleInput[roleId], value: !baseObj[roleId].value}});
+        }, 1000);
+      }
+    }
+  };
   const toggleLockSwicth = () => {
     setUserLock(!isUserLocked);
-    // toggleLockUser()
+    toggleLockUser({id}, isUserLocked ? "unlock" : "lock").then(() => {
+      setTimeout(() => {
+        NotificationManager.success(get(localeData[store.getState().reducerLocale.locale], "success.success"));
+      }, 1000);
+    }).catch(() => {
+      setUserLock(!isUserLocked);
+    });
   };
   return(
     <React.Fragment>
       <ModalHeader className="home-modal-header" tag="div">
         <Translator id="userGroup.editUser"/>
-        <button className="close-button" onClick={onClickClose}>
+        <button className="close-button" onClick={() => onClickClose({type: "editUser", uid: uuid()})}>
           <i className="fas fa-times"/>
         </button>
       </ModalHeader>
       <ModalBody className="edit-user">
-        {isSuperadmin ? (
+        {!isSuperadmin ? (
           <FormGroup className="input-toggle-user-lock">
             <label>
               <Translator id="userGroup.toggleLock"/>
@@ -152,7 +205,7 @@ export const EditUserModal = ({onClickClose}) => {
           <label>
             <Translator id="userGroup.role"/>
           </label>
-          <div className="custom-input-form">
+          <div className={isUpdatingRoles ? "custom-input-form form-pending" : "custom-input-form"}>
             {Object.keys(roleInput).map((each, i) => {
               return(
                 <div
@@ -242,12 +295,12 @@ export const CreateUserModal = ({onClickClose}) => {
           confirm_password: formStatus.password.value,
           fullname: formStatus.fullname.value
         });
-        const creatingUserRole = await createUserRole({
+        const creatingUserRole = await updateUserRole({
           user_id: creatingUser.id,
           roles: selectedNewRole
         });
         if(creatingUserRole.result.length === selectedNewRole.length){
-          onClickClose("createUser");
+          onClickClose({type: "createUser", uid: uuid()});
         }
       }catch(err){
         // console.log(err);
@@ -258,7 +311,7 @@ export const CreateUserModal = ({onClickClose}) => {
     <React.Fragment>
       <ModalHeader className="home-modal-header" tag="div">
         <Translator id="userGroup.createNewUser"/>
-        <button className="close-button" onClick={onClickClose}>
+        <button className="close-button" onClick={() => onClickClose({type: "createUser", uid: uuid()})}>
           <i className="fas fa-times"/>
         </button>
       </ModalHeader>

@@ -1,10 +1,14 @@
 {
+  "success": {
+    "success": "Success"
+  },
   "warning": {
     "networkError": "Network error",
     "sessionTimeout": "Session timeout",
     "emailInvalid": "Invalid email address",
     "choseAnOption": "Please choose an option",
     "fieldEmptyInvalid": "Field cannot be empty",
+    "actionProhibited": "Action Prohibited",
     "passwordInvalid": "Password must be at least 8 characters long & contain numbers"
   },
   "commonGroup": {

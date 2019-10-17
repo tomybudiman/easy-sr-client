@@ -33,11 +33,11 @@ export const createUser = payload => {
   });
 };
 
-export const createUserRole = payload => {
+export const updateUserRole = (payload, defaultMethod = true) => {
   const {authToken} = store.getState().reducerAuth;
   return new Promise((resolve, reject) => {
     axios({
-      method: "POST",
+      method: defaultMethod ? "POST" : "DELETE",
       url: `${process.env.REACT_APP_API_HOST}/iam/role`,
       headers: {
         "Content-Type": "application/json",

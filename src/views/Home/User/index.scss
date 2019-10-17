@@ -169,10 +169,18 @@
 				border-radius: $border-radius;
 			}
 		}
-		.input-edit-user-role .custom-input-form {
-			display: flex;
-			justify-content: space-between;
-			@include user-role-chip;
+		.input-edit-user-role {
+			.custom-input-form {
+				display: flex;
+				justify-content: space-between;
+				@include user-role-chip;
+			}
+			.form-pending {
+				opacity: 0.6;
+				* {
+					cursor: default !important;
+				}
+			}
 		}
 	}
 }

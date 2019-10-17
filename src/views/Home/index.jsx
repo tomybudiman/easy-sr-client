@@ -130,7 +130,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
     }
   };
   return(
-    <Modal open={homeModal.state} toggle={toggleModal} className="home-modal" size={modalSize}>
+    <Modal open={homeModal.state} toggle={() => null} className="home-modal" size={modalSize}>
       <RenderComponent/>
     </Modal>
   )

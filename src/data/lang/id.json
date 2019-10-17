@@ -1,10 +1,14 @@
 {
+  "success": {
+    "success": "Success"
+  },
   "warning": {
     "networkError": "Kesalahan jaringan",
     "sessionTimeout": "Sesi berakhir",
     "emailInvalid": "Alamat surel tidak berlaku",
     "choseAnOption": "Harap pilih pilihan",
     "fieldEmptyInvalid": "Isian tidak diperbolehkan kosong",
+    "actionProhibited": "Tindakan Dilarang",
     "passwordInvalid": "Kata sandi harus memiliki panjang minimal 8 karakter & mengandung angka"
   },
   "commonGroup": {
