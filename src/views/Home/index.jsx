@@ -34,6 +34,11 @@ const SurveyDisclosure = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+const Settings = Loadable({
+  loader: () => import("./Settings"),
+  loading: () => <React.Fragment/>,
+});
+
 const rootRoute = history.location.pathname.match(/^\/[^/]+/)[0];
 
 // Core Components
@@ -136,16 +141,78 @@ const HomeModal = ({homeModal, toggleModal}) => {
   )
 };
 
+const HomeBody = ({openHomeModal, prevEvent, activeLocale}) => {
+  const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
+  const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
+    document.querySelector(".sidebar").scrollTo(0, 0);
+  });
+  // Methods
+  const sidebarOnClickHandler = data => {
+    const closeModalScopeId = ["dashboard", "listUser", "createUser", "department", "materiality", "disclosure"];
+    openHomeModal(data);
+    if(closeModalScopeId.includes(data.data.id) && screenMobile){
+      setSidebarOpen(!sidebarOpen);
+    }
+  };
+  // Window Resize Event
+  window.addEventListener("resize", () => {
+    setScreenMobile(window.innerWidth <= 768);
+    if(sidebarOpen){
+      setSidebarOpen(window.innerWidth > 768);
+    }
+  });
+  return(
+    <div className="body">
+      <div
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className={screenMobile && sidebarOpen ? "overlay-dark" : "overlay-dark overlay-dark-inactive"}/>
+      <div className={sidebarOpen ? "sidebar" : "sidebar sidebar-inactive"}>
+        <button
+          title={sidebarOpen ? "Minimize" : "Open"}
+          onClick={e => setSidebarOpen(!sidebarOpen)}
+          className={sidebarOpen ? "sidebar-toggle toggle-close" : "sidebar-toggle"}>
+          <hr/><hr/><hr/>
+        </button>
+        <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
+        <SidebarContent visible={sidebarOpen} onClickSidebar={data => sidebarOnClickHandler(data)}/>
+      </div>
+      <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
+        <div className="content-body">
+          <Router history={history}>
+            <Switch>
+              <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
+              <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
+              <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
+              <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
+              <Route render={() => <Redirect to={rootRoute}/>}/>
+            </Switch>
+          </Router>
+        </div>
+        <div className="body-footer-card">
+          <div className="lang-switcher">
+            <p
+              className={activeLocale === "id" ? "current-locale" : null}
+              onClick={() => store.dispatch(changeLocale("id"))}>ID</p>
+            <span className="separator">&bull;</span>
+            <p
+              className={activeLocale === "en" ? "current-locale" : null}
+              onClick={() => store.dispatch(changeLocale("en"))}>EN</p>
+          </div>
+          <p className="copyright-text">
+            Brand &copy; {new Date().getFullYear()} <Translator id="commonGroup.allRightsReserved"/>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+};
+
 const Home = () => {
   const user = {
     ...get(store.getState().reducerAuth, "userTokenData.user") || {},
     roles: get(store.getState().reducerAuth, "userTokenData.roles") || []
   };
   const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
-  const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
-  const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
-    document.querySelector(".sidebar").scrollTo(0, 0);
-  });
   const [homeModal, setHomeModal] = useState({state: false, id: null});
   const [prevEvent, setNewEvent] = useState(null);
   const isSuperadmin = user.roles.includes("superadmin");
@@ -154,13 +221,6 @@ const Home = () => {
     const allowedModalId = ["createUser", "editUser", "createDepartment"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
-    }
-  };
-  const sidebarOnClickHandler = data => {
-    const closeModalScopeId = ["dashboard", "listUser", "createUser", "department", "materiality", "disclosure"];
-    openHomeModal(data);
-    if(closeModalScopeId.includes(data.data.id) && screenMobile){
-      setSidebarOpen(!sidebarOpen);
     }
   };
   const toggleModal = event => {
@@ -177,13 +237,6 @@ const Home = () => {
   };
   store.subscribe(() => {
     setActiveLocale(store.getState().reducerLocale.locale);
-  });
-  // Window Resize Event
-  window.addEventListener("resize", () => {
-    setScreenMobile(window.innerWidth <= 768);
-    if(sidebarOpen){
-      setSidebarOpen(window.innerWidth > 768);
-    }
   });
   return(
     <React.Fragment>
@@ -205,51 +258,21 @@ const Home = () => {
             </div>
             <div className="user-loggedin-dialog">
               <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
+              <Link to={`${rootRoute}/settings`}><Translator id="commonGroup.settings"/></Link>
             </div>
           </div>
         </div>
-        <div className="body">
-          <div
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className={screenMobile && sidebarOpen ? "overlay-dark" : "overlay-dark overlay-dark-inactive"}/>
-          <div className={sidebarOpen ? "sidebar" : "sidebar sidebar-inactive"}>
-            <button
-              title={sidebarOpen ? "Minimize" : "Open"}
-              onClick={e => setSidebarOpen(!sidebarOpen)}
-              className={sidebarOpen ? "sidebar-toggle toggle-close" : "sidebar-toggle"}>
-              <hr/><hr/><hr/>
-            </button>
-            <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
-            <SidebarContent visible={sidebarOpen} onClickSidebar={data => sidebarOnClickHandler(data)}/>
-          </div>
-          <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
-            <div className="content-body">
-              <Router history={history}>
-                <Switch>
-                  <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-                  <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-                  <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
-                  <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
-                  <Route render={() => <Redirect to={rootRoute}/>}/>
-                </Switch>
-              </Router>
-            </div>
-            <div className="body-footer-card">
-              <div className="lang-switcher">
-                <p
-                  className={activeLocale === "id" ? "current-locale" : null}
-                  onClick={() => store.dispatch(changeLocale("id"))}>ID</p>
-                <span className="separator">&bull;</span>
-                <p
-                  className={activeLocale === "en" ? "current-locale" : null}
-                  onClick={() => store.dispatch(changeLocale("en"))}>EN</p>
-              </div>
-              <p className="copyright-text">
-                Brand &copy; {new Date().getFullYear()} <Translator id="commonGroup.allRightsReserved"/>
-              </p>
-            </div>
-          </div>
-        </div>
+        <Router history={history}>
+          <Switch>
+            <Route exact path={`${rootRoute}/settings`} component={Settings}/>
+            <Route path={rootRoute} render={() => (
+              <HomeBody
+                prevEvent={prevEvent}
+                activeLocale={activeLocale}
+                openHomeModal={openHomeModal}/>
+            )}/>
+          </Switch>
+        </Router>
       </div>
     </React.Fragment>
   )

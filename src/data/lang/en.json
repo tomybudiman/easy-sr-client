@@ -18,6 +18,7 @@
     "logout": "Logout",
     "locked": "Locked",
     "active": "Active",
+    "settings": "Settings",
     "inactive": "Inactive",
     "unlocked": "Unlocked",
     "language": "Language",
@@ -52,5 +53,11 @@
     "disclosure": "Disclosure",
     "materialitySurvey": "Materiality Survey",
     "disclosureSurvey": "Disclosure Survey"
+  },
+  "settingsGroup": {
+    "settings": "Settings",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password"
   }
 }

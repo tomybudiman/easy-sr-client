@@ -18,6 +18,7 @@
     "logout": "Keluar",
     "locked": "Terkunci",
     "active": "Aktif",
+    "settings": "Pengaturan",
     "inactive": "Tidak Aktif",
     "unlocked": "Aktif",
     "language": "Bahasa",
@@ -52,5 +53,11 @@
     "disclosure": "Disclosure",
     "materialitySurvey": "Materiality Survei",
     "disclosureSurvey": "Disclosure Survei"
+  },
+  "settingsGroup": {
+    "settings": "Pengaturan",
+    "changePassword": "Ganti Kata Sandi",
+    "currentPassword": "Kata Sandi Sekarang",
+    "newPassword": "Kata Sandi Baru"
   }
 }

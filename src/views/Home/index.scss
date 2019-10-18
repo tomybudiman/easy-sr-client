@@ -1,5 +1,6 @@
 @import "../../assets/style/variables";
 @import "Department/index";
+@import "Settings/index";
 @import "User/index";
 
 $sidebarChildItemHeight: 48px;
@@ -110,8 +111,9 @@ $sidebarChildItemHeight: 48px;
 				background-color: white;
 				transition-duration: 500ms;
 				box-shadow: 3px 0 30px rgba(17,31,93,.08), 2px 0 5px rgba(27,27,43,.09);
-				p {
+				p, a {
 					margin: 0;
+					display: block;
 					cursor: pointer;
 					padding: 8px 16px;
 					border-radius: 4px;
@@ -119,6 +121,9 @@ $sidebarChildItemHeight: 48px;
 					transition-duration: 0.3s;
 					&:hover, &:active {
 						background-color: rgba($secondaryColor, 0.2);
+					}
+					&:not(:first-child) {
+						margin-top: 8px;
 					}
 				}
 			}
@@ -384,6 +389,11 @@ $sidebarChildItemHeight: 48px;
 .root {
 	width: 100%;
 	height: 100%;
+	.root-content {
+		padding: 16px;
+		box-sizing: border-box;
+		@include settings-container;
+	}
 	@include root-appbar;
 	@include root-body;
 }
