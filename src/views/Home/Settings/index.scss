@@ -1,0 +1,27 @@
+@import "../../../assets/style/variables";
+
+@mixin change-password {
+	.change-password {
+	}
+}
+
+@mixin settings-container {
+	.settings-container {
+		padding: 16px;
+		margin-top: 16px;
+		max-width: 512px;
+		border-radius: 8px;
+		box-sizing: border-box;
+		background-color: #FFFFFF;
+		box-shadow: rgba(17, 31, 93, 0.08) 3px 0 30px, rgba(27, 27, 43, 0.09) 2px 0 5px;
+		.each-function {
+			.function-header {
+				margin: 0;
+				font-size: 20px;
+				font-weight: bold;
+				color: $secondaryColor;
+			}
+		}
+		@include change-password;
+	}
+}
