@@ -227,7 +227,7 @@ const Home = () => {
               <Router history={history}>
                 <Switch>
                   <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-                  <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal}/>}/>
+                  <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
                   <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
                   <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
                   <Route render={() => <Redirect to={rootRoute}/>}/>
