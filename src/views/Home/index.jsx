@@ -3,13 +3,11 @@ import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
 import useStateWithCallback from "use-state-with-callback";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
-import get from "lodash/get";
 
-import store from "../../state";
 import history from "../../utils/history";
-import {logoutMethod} from "../Auth/fetch";
 import sidebarJson from "../../data/sidebar";
 import Translator from "../../components/Translator";
+import DashboardAppbar from "../../components/DashboardAppbar";
 import DashboardFooter from "../../components/DashboardFooter";
 import PageRouteHeader from "../../components/PageRouteHeader";
 import {sidebarChildItemHeight} from "./index.scss";
@@ -208,13 +206,8 @@ const HomeColumnWrapper = ({children}) => (
 );
 
 const Home = () => {
-  const user = {
-    ...get(store.getState().reducerAuth, "userTokenData.user") || {},
-    roles: get(store.getState().reducerAuth, "userTokenData.roles") || []
-  };
   const [homeModal, setHomeModal] = useState({state: false, id: null});
   const [prevEvent, setNewEvent] = useState(null);
-  const isSuperadmin = user.roles.includes("superadmin");
   // Methods
   const openHomeModal = ({data}) => {
     const allowedModalId = ["createUser", "editUser", "createDepartment"];
@@ -226,38 +219,11 @@ const Home = () => {
     setHomeModal({...homeModal, state: !homeModal.state});
     setNewEvent(event);
   };
-  const getSimpleName = () => {
-    if(user.fullname){
-      const splitFullname = user.fullname.split(" ").map(each => each.slice(0, 1));
-      return splitFullname.filter((each, i) => i === 0 || i === splitFullname.length - 1);
-    }else{
-      return null
-    }
-  };
   return(
     <React.Fragment>
       <HomeModal homeModal={homeModal} toggleModal={toggleModal}/>
       <div className="root">
-        <div className="appbar">
-          <div className="user-loggedin" tabIndex="-1">
-            <div className="selector-container">
-              <div className="user-logo-text">
-                <p>{getSimpleName()}</p>
-              </div>
-              <div className={isSuperadmin ? "user-identity superadmin-role" : "user-identity"}>
-                <p>{user.fullname}</p>
-                {isSuperadmin ? <p>Superadmin</p> : null}
-              </div>
-              <button>
-                <i className="fas fa-angle-down"/>
-              </button>
-            </div>
-            <div className="user-loggedin-dialog">
-              <Link to={`${rootRoute}/settings`}><Translator id="commonGroup.settings"/></Link>
-              <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
-            </div>
-          </div>
-        </div>
+        <DashboardAppbar/>
         <Router history={history}>
           <Switch>
             <Route exact path={`${rootRoute}/settings`} render={() => (
