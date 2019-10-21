@@ -2,23 +2,58 @@
 
 @mixin change-password {
 	.change-password {
+		display: flex;
+		max-width: 768px;
+		flex-direction: column;
+		.form-group {
+			margin-top: 8px;
+			margin-bottom: 0;
+			.password-container {
+				position: relative;
+				input {
+					padding-right: 40px;
+				}
+				button {
+					top: 0;
+					bottom: 0;
+					right: 8px;
+					padding: 0;
+					width: 24px;
+					height: 24px;
+					border: none;
+					margin: auto;
+					outline: none;
+					font-size: 16px;
+					position: absolute;
+					background-color: transparent;
+				}
+			}
+			.invalid-feedback {
+				display: block;
+				margin-bottom: 0;
+			}
+		}
+		.custom-button {
+			width: 100px;
+			margin-top: 16px;
+			align-self: flex-end;
+		}
 	}
 }
 
 @mixin settings-container {
 	.settings-container {
-		padding: 16px;
 		margin-top: 16px;
-		max-width: 512px;
-		border-radius: 8px;
-		box-sizing: border-box;
-		background-color: #FFFFFF;
-		box-shadow: rgba(17, 31, 93, 0.08) 3px 0 30px, rgba(27, 27, 43, 0.09) 2px 0 5px;
 		.each-function {
+			padding: 16px 24px;
+			border-radius: 8px;
+			box-sizing: border-box;
+			background-color: #FFFFFF;
+			box-shadow: rgba(17, 31, 93, 0.08) 3px 0 30px, rgba(27, 27, 43, 0.09) 2px 0 5px;
 			.function-header {
-				margin: 0;
 				font-size: 20px;
 				font-weight: bold;
+				margin: 0 0 8px 0;
 				color: $secondaryColor;
 			}
 		}

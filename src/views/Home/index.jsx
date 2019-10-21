@@ -9,8 +9,9 @@ import store from "../../state";
 import history from "../../utils/history";
 import {logoutMethod} from "../Auth/fetch";
 import sidebarJson from "../../data/sidebar";
-import {changeLocale} from "../../state/actions";
 import Translator from "../../components/Translator";
+import DashboardFooter from "../../components/DashboardFooter";
+import PageRouteHeader from "../../components/PageRouteHeader";
 import {sidebarChildItemHeight} from "./index.scss";
 
 // Import Components
@@ -141,7 +142,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
   )
 };
 
-const HomeBody = ({openHomeModal, prevEvent, activeLocale}) => {
+const HomeBody = ({openHomeModal, prevEvent}) => {
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
     document.querySelector(".sidebar").scrollTo(0, 0);
@@ -188,31 +189,29 @@ const HomeBody = ({openHomeModal, prevEvent, activeLocale}) => {
             </Switch>
           </Router>
         </div>
-        <div className="body-footer-card">
-          <div className="lang-switcher">
-            <p
-              className={activeLocale === "id" ? "current-locale" : null}
-              onClick={() => store.dispatch(changeLocale("id"))}>ID</p>
-            <span className="separator">&bull;</span>
-            <p
-              className={activeLocale === "en" ? "current-locale" : null}
-              onClick={() => store.dispatch(changeLocale("en"))}>EN</p>
-          </div>
-          <p className="copyright-text">
-            Brand &copy; {new Date().getFullYear()} <Translator id="commonGroup.allRightsReserved"/>
-          </p>
-        </div>
+        <DashboardFooter/>
       </div>
     </div>
   )
 };
+
+const HomeColumnWrapper = ({children}) => (
+  <div className="body-column">
+    <div className="body-column-content">
+      <PageRouteHeader>
+        <Translator id="settingsGroup.settings"/>
+      </PageRouteHeader>
+      {children}
+    </div>
+    <DashboardFooter/>
+  </div>
+);
 
 const Home = () => {
   const user = {
     ...get(store.getState().reducerAuth, "userTokenData.user") || {},
     roles: get(store.getState().reducerAuth, "userTokenData.roles") || []
   };
-  const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
   const [homeModal, setHomeModal] = useState({state: false, id: null});
   const [prevEvent, setNewEvent] = useState(null);
   const isSuperadmin = user.roles.includes("superadmin");
@@ -235,9 +234,6 @@ const Home = () => {
       return null
     }
   };
-  store.subscribe(() => {
-    setActiveLocale(store.getState().reducerLocale.locale);
-  });
   return(
     <React.Fragment>
       <HomeModal homeModal={homeModal} toggleModal={toggleModal}/>
@@ -257,20 +253,17 @@ const Home = () => {
               </button>
             </div>
             <div className="user-loggedin-dialog">
-              <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
               <Link to={`${rootRoute}/settings`}><Translator id="commonGroup.settings"/></Link>
+              <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
             </div>
           </div>
         </div>
         <Router history={history}>
           <Switch>
-            <Route exact path={`${rootRoute}/settings`} component={Settings}/>
-            <Route path={rootRoute} render={() => (
-              <HomeBody
-                prevEvent={prevEvent}
-                activeLocale={activeLocale}
-                openHomeModal={openHomeModal}/>
+            <Route exact path={`${rootRoute}/settings`} render={() => (
+              <HomeColumnWrapper><Settings/></HomeColumnWrapper>
             )}/>
+            <Route path={rootRoute} render={() => <HomeBody prevEvent={prevEvent} openHomeModal={openHomeModal}/>}/>
           </Switch>
         </Router>
       </div>

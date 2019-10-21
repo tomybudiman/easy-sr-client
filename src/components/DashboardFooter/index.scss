@@ -1,0 +1,55 @@
+@import "../../assets/style/variables";
+
+.dashboard-footer-container {
+	display: flex;
+	padding: 16px 24px;
+	border-radius: 4px;
+	box-sizing: border-box;
+	background-color: white;
+	justify-content: space-between;
+	.lang-switcher {
+		display: flex;
+		font-size: 14px;
+		flex-wrap: nowrap;
+		color: $secondaryColor;
+		.separator {
+			margin: 0 4px;
+		}
+		.current-locale {
+			font-weight: bold;
+		}
+		p {
+			margin: 0;
+			cursor: pointer;
+		}
+	}
+	.copyright-text {
+		margin: 0;
+		font-size: 14px;
+		font-weight: bold;
+		letter-spacing: 1px;
+		color: $secondaryColor;
+	}
+}
+
+@media only screen and (max-width: $mobile) {
+	.dashboard-footer-container {
+		flex-direction: column;
+		.lang-switcher {
+			justify-content: center;
+		}
+		.copyright-text {
+			order: -1;
+			text-align: center;
+			margin-bottom: 8px;
+		}
+	}
+}
+
+@media only screen and (max-width: $tablet) {
+	.dashboard-footer-container {
+		.copyright-text, .lang-switcher {
+			font-size: 12px;
+		}
+	}
+}

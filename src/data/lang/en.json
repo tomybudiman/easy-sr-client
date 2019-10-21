@@ -9,6 +9,7 @@
     "choseAnOption": "Please choose an option",
     "fieldEmptyInvalid": "Field cannot be empty",
     "actionProhibited": "Action Prohibited",
+    "passwordCheck": "Recheck Your Password",
     "passwordInvalid": "Password must be at least 8 characters long & contain numbers"
   },
   "commonGroup": {
