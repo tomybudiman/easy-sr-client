@@ -6,6 +6,13 @@
     "path": "/"
   },
   {
+    "id": "organization",
+    "roles": ["superadmin"],
+    "label": "organizationGroup.organization",
+    "iconClassname": "fas fa-sitemap",
+    "path": "/organization"
+  },
+  {
     "id": "user",
     "label": "userGroup.user",
     "iconClassname": "far fa-user",

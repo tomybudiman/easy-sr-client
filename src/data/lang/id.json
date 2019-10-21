@@ -9,7 +9,7 @@
     "choseAnOption": "Harap pilih pilihan",
     "fieldEmptyInvalid": "Isian tidak diperbolehkan kosong",
     "actionProhibited": "Tindakan Dilarang",
-    "passwordCheck": "Periksa Kembali Kata Sandi Kamu",
+    "passwordCheck": "Periksa Kembali Kata Sandi Anda",
     "passwordInvalid": "Kata sandi harus memiliki panjang minimal 8 karakter & mengandung angka"
   },
   "commonGroup": {
@@ -25,6 +25,9 @@
     "language": "Bahasa",
     "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
+  },
+  "organizationGroup": {
+    "organization": "Organisasi"
   },
   "userGroup": {
     "user": "Pengguna",
