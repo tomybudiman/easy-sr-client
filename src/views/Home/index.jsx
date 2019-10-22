@@ -5,14 +5,18 @@ import Loadable from "react-loadable";
 import {Modal} from "shards-react";
 
 import history from "../../utils/history";
-import sidebarJson from "../../data/sidebar";
 import Translator from "../../components/Translator";
 import DashboardAppbar from "../../components/DashboardAppbar";
 import DashboardFooter from "../../components/DashboardFooter";
 import PageRouteHeader from "../../components/PageRouteHeader";
-import {sidebarChildItemHeight} from "./index.scss";
+import DashboardSidebar from "../../components/DashboardSidebar";
 
 // Import Components
+const Organization = Loadable({
+  loader: () => import("./Organization"),
+  loading: () => <React.Fragment/>,
+});
+
 const User = Loadable({
   loader: () => import("./User"),
   loading: () => <React.Fragment/>,
@@ -41,78 +45,6 @@ const Settings = Loadable({
 const rootRoute = history.location.pathname.match(/^\/[^/]+/)[0];
 
 // Core Components
-const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
-  const itemHeight = parseFloat(sidebarChildItemHeight);
-  return(
-    <div className="navbar-item">
-      <div className="first-row" onClick={e => {
-        if(typeof onClick === "function"){
-          onClick({e, data});
-        }
-      }}>
-        <p>
-          {data.iconClassname ? <i className={data.iconClassname}/> : null}
-          <Translator id={data.label}/>
-        </p>
-        {data.child && data.isExpanded !== undefined ? (
-          <button onClick={e => toggleSidebarItemCb(data.id)} className={data.isExpanded ? "expanded" : null}>
-            <i className={data.isExpanded ? "fas fa-angle-left fas-rotated" : "fas fa-angle-left"}/>
-          </button>
-        ) : null}
-      </div>
-      {data.child && data.isExpanded !== undefined ? (
-        <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
-          {data.child.map((each, i) => {
-            if(each.path){
-              return(
-                <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i} onClick={e => onClick({e, data: each})}>
-                  <SidebarItem data={each}/>
-                </Link>
-              )
-            }else{
-              return <SidebarItem data={each} key={i} onClick={e => onClick({e: e.e, data: each})}/>
-            }
-          })}
-        </div>
-      ) : null}
-    </div>
-  )
-};
-
-const SidebarContent = ({visible, onClickSidebar}) => {
-  const [sidebar, setSidebar] = useState(sidebarJson);
-  const updateSidebar = (objKey) => {
-    const newSidebar = sidebar.map(each => {
-      if(each.id === objKey){
-        return {...each, isExpanded: !each.isExpanded}
-      }
-      return each
-    });
-    setSidebar(newSidebar);
-  };
-  return(
-    <div className={visible ? "navbar-content navbar-content-visible" : "navbar-content"}>
-      {sidebar.map((each, i) => {
-        if(each.path){
-          return(
-            <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i}>
-              <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
-            </Link>
-          )
-        }else{
-          return(
-            <SidebarItem
-              key={i}
-              data={each}
-              onClick={e => onClickSidebar(e)}
-              toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
-          )
-        }
-      })}
-    </div>
-  )
-};
-
 const HomeModal = ({homeModal, toggleModal}) => {
   const [modalSize, setModalSize] = useState("md");
   const RenderComponent = () => {
@@ -153,7 +85,7 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
       setSidebarOpen(!sidebarOpen);
     }
   };
-  // Window Resize Event
+  // Resize Event
   window.addEventListener("resize", () => {
     setScreenMobile(window.innerWidth <= 768);
     if(sidebarOpen){
@@ -162,23 +94,12 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
   });
   return(
     <div className="body">
-      <div
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className={screenMobile && sidebarOpen ? "overlay-dark" : "overlay-dark overlay-dark-inactive"}/>
-      <div className={sidebarOpen ? "sidebar" : "sidebar sidebar-inactive"}>
-        <button
-          title={sidebarOpen ? "Minimize" : "Open"}
-          onClick={e => setSidebarOpen(!sidebarOpen)}
-          className={sidebarOpen ? "sidebar-toggle toggle-close" : "sidebar-toggle"}>
-          <hr/><hr/><hr/>
-        </button>
-        <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
-        <SidebarContent visible={sidebarOpen} onClickSidebar={data => sidebarOnClickHandler(data)}/>
-      </div>
+      <DashboardSidebar setSidebarOpen={setSidebarOpen} sidebarOpen={sidebarOpen} sidebarOnClickHandler={sidebarOnClickHandler}/>
       <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
         <div className="content-body">
           <Router history={history}>
             <Switch>
+              <Route exact path={`${rootRoute}/organization`} render={() => <Organization onClickEvent={openHomeModal}/>}/>
               <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
               <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
               <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
