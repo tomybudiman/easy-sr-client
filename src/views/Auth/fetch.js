@@ -9,6 +9,11 @@ import history from "../../utils/history";
 import {setAuthToken, setTokenVerified, setUserTokenData} from "../../state/actions";
 import {NotificationManager} from "react-notifications";
 
+const manipulateSessionScope = obj => {
+  const newSessionScope = obj.scope.includes("superadmin") ? obj.scope.filter(each => each === "superadmin") : obj.scope;
+  return {...obj, scope: newSessionScope}
+};
+
 const generateNewToken = (data) => {
   const tokenExpiryTime = 3600;
   const expiryTime = Math.floor(Date.now() / 1000) + tokenExpiryTime;
@@ -29,7 +34,7 @@ export const refreshTokenMethod = (token, verify = false) => {
     }).then(({data}) => {
       const {token, expiryTime} = generateNewToken(data.token);
       Cookies.set("UID", token, {expires: new Date(expiryTime * 1000)});
-      store.dispatch(setUserTokenData(readTokenData(data.token).session));
+      store.dispatch(setUserTokenData(manipulateSessionScope(readTokenData(data.token).session)));
       store.dispatch(setTokenVerified(true));
       store.dispatch(setAuthToken(data.token));
       refreshTokenMethod(token);
@@ -65,6 +70,7 @@ export const logoutMethod = () => {
     console.error(err);
   }).finally(() => {
     store.dispatch(setAuthToken(null));
+    store.dispatch(setUserTokenData(null));
     Cookies.remove("UID");
     history.replace({
       search: "?type=login",
@@ -83,7 +89,7 @@ export const loginMethod = (email, password) => {
     }).then(({data}) => {
       const {token, expiryTime} = generateNewToken(data.token);
       Cookies.set("UID", token, {expires: new Date(expiryTime * 1000)});
-      store.dispatch(setUserTokenData(readTokenData(data.token).session));
+      store.dispatch(setUserTokenData(manipulateSessionScope(readTokenData(data.token).session)));
       store.dispatch(setTokenVerified(true));
       store.dispatch(setAuthToken(data.token));
       refreshTokenMethod(token);

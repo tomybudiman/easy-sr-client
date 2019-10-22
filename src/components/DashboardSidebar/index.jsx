@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
+import difference from "lodash/difference";
 
+import store from "../../state";
 import Translator from "../Translator";
 import history from "../../utils/history";
 import sidebarJson from "../../data/sidebar";
@@ -10,6 +12,7 @@ const rootRoute = history.location.pathname.match(/^\/[^/]+/)[0];
 
 const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
   const itemHeight = parseFloat(sidebarChildItemHeight);
+  const sessionScope = store.getState().reducerAuth.userTokenData.scope;
   return(
     <div className="navbar-item">
       <div className="first-row" onClick={e => {
@@ -30,14 +33,20 @@ const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
       {data.child && data.isExpanded !== undefined ? (
         <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
           {data.child.map((each, i) => {
-            if(each.path){
-              return(
-                <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i} onClick={e => onClick({e, data: each})}>
-                  <SidebarItem data={each}/>
-                </Link>
-              )
+            const childRoles = each.roles === undefined || each.roles === "inherit" ? data.roles : each.roles;
+            const isScopeAllowed = childRoles.includes(true) || difference(sessionScope, childRoles).length !== sessionScope.length;
+            if(isScopeAllowed){
+              if(each.path){
+                return(
+                  <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i} onClick={e => onClick({e, data: each})}>
+                    <SidebarItem data={each}/>
+                  </Link>
+                )
+              }else{
+                return <SidebarItem data={each} key={i} onClick={e => onClick({e: e.e, data: each})}/>
+              }
             }else{
-              return <SidebarItem data={each} key={i} onClick={e => onClick({e: e.e, data: each})}/>
+              return null
             }
           })}
         </div>
@@ -48,6 +57,7 @@ const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
 
 const SidebarContent = ({visible, onClickSidebar}) => {
   const [sidebar, setSidebar] = useState(sidebarJson);
+  const sessionScope = store.getState().reducerAuth.userTokenData.scope;
   const updateSidebar = (objKey) => {
     const newSidebar = sidebar.map(each => {
       if(each.id === objKey){
@@ -60,20 +70,25 @@ const SidebarContent = ({visible, onClickSidebar}) => {
   return(
     <div className={visible ? "navbar-content navbar-content-visible" : "navbar-content"}>
       {sidebar.map((each, i) => {
-        if(each.path){
-          return(
-            <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i}>
-              <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
-            </Link>
-          )
+        const isScopeAllowed = each.roles.includes(true) || difference(sessionScope, each.roles).length !== sessionScope.length;
+        if(isScopeAllowed){
+          if(each.path){
+            return(
+              <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i}>
+                <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+              </Link>
+            )
+          }else{
+            return(
+              <SidebarItem
+                key={i}
+                data={each}
+                onClick={e => onClickSidebar(e)}
+                toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
+            )
+          }
         }else{
-          return(
-            <SidebarItem
-              key={i}
-              data={each}
-              onClick={e => onClickSidebar(e)}
-              toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
-          )
+          return null
         }
       })}
     </div>

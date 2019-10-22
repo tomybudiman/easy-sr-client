@@ -1,6 +1,7 @@
 [
   {
     "id": "dashboard",
+    "roles": [true],
     "label": "commonGroup.dashboard",
     "iconClassname": "fas fa-tachometer-alt",
     "path": "/"
@@ -21,11 +22,13 @@
     "child": [
       {
         "id": "listUser",
+        "roles": "inherit",
         "label": "userGroup.list",
         "path": "/user"
       },
       {
         "id": "createUser",
+        "roles": "inherit",
         "label": "userGroup.createNew"
       }
     ]
@@ -39,17 +42,20 @@
   },
   {
     "id": "survey",
+    "roles": ["superadmin", "org_admin"],
     "label": "surveyGroup.survey",
     "iconClassname": "fas fa-poll",
     "isExpanded": false,
     "child": [
       {
         "id": "materiality",
+        "roles": "inherit",
         "label": "surveyGroup.materiality",
         "path": "/survey/materiality"
       },
       {
         "id": "disclosure",
+        "roles": "inherit",
         "label": "surveyGroup.disclosure",
         "path": "/survey/disclosure"
       }
