@@ -1,5 +1,6 @@
 @import "../../assets/style/variables";
 @import "Department/index";
+@import "Settings/index";
 @import "User/index";
 
 $sidebarChildItemHeight: 48px;
@@ -9,111 +10,7 @@ $sidebarChildItemHeight: 48px;
 	@include create-new-user;
 }
 
-.root {
-	width: 100%;
-	height: 100%;
-	.appbar {
-		z-index: 2;
-		width: 100%;
-		height: 64px;
-		display: flex;
-		padding: 0 32px;
-		position: relative;
-		align-items: center;
-		justify-content: flex-end;
-		background-color: $secondaryColor;
-		box-shadow: 3px 0 30px rgba(17,31,93,.08), 2px 0 5px rgba(27,27,43,.09);
-		.user-loggedin {
-			position: relative;
-			&:focus {
-				.user-loggedin-dialog {
-					top: 64px;
-					opacity: 1;
-					visibility: visible;
-				}
-			}
-			&:focus, &:hover {
-				.selector-container {
-					background-color: rgba($lightColor,.2);
-				}
-			}
-			.selector-container {
-				height: 44px;
-				padding: 6px;
-				display: flex;
-				cursor: pointer;
-				flex-wrap: nowrap;
-				letter-spacing: 1px;
-				border-radius: 22px;
-				box-sizing: border-box;
-				transition-duration: 250ms;
-				* {
-					cursor: pointer;
-				}
-				.user-logo-text {
-					width: 32px;
-					height: 32px;
-					display: flex;
-					margin-right: 8px;
-					border-radius: 50%;
-					align-items: center;
-					color: $secondaryColor;
-					justify-content: center;
-					transition-duration: 250ms;
-					background-color: $lightColor;
-					p {
-						margin: 0;
-						font-size: 14px;
-					}
-				}
-				.user-identity {
-					display: flex;
-					flex-wrap: nowrap;
-					align-items: center;
-					p {
-						margin: 0 8px 0 0;
-						color: $lightColor;
-					}
-					button {
-						padding: 0;
-						border: none;
-						outline: none;
-						display: flex;
-						margin: 0 8px 0 0;
-						flex-wrap: nowrap;
-						color: $lightColor;
-						align-items: center;
-						background-color: transparent;
-					}
-				}
-			}
-			.user-loggedin-dialog {
-				right: 0;
-				top: 56px;
-				opacity: 0;
-				width: 250px;
-				padding: 8px;
-				border-radius: 4px;
-				position: absolute;
-				visibility: hidden;
-				box-sizing: border-box;
-				background-color: white;
-				transition-duration: 500ms;
-				box-shadow: 3px 0 30px rgba(17,31,93,.08), 2px 0 5px rgba(27,27,43,.09);
-				p {
-					margin: 0;
-					cursor: pointer;
-					padding: 8px 16px;
-					border-radius: 4px;
-					color: $secondaryColor;
-					transition-duration: 0.3s;
-					&:hover, &:active {
-						background-color: rgba($secondaryColor, 0.2);
-					}
-				}
-			}
-		}
-	}
+@mixin root-body {
 	.body {
 		width: 100%;
 		display: flex;
@@ -289,50 +186,6 @@ $sidebarChildItemHeight: 48px;
 				flex-grow: 1;
 				margin-bottom: 16px;
 			}
-			.body-footer-card {
-				display: flex;
-				padding: 16px 24px;
-				border-radius: 4px;
-				box-sizing: border-box;
-				background-color: white;
-				justify-content: space-between;
-				.lang-switcher {
-					display: flex;
-					font-size: 14px;
-					flex-wrap: nowrap;
-					color: $secondaryColor;
-					.separator {
-						margin: 0 4px;
-					}
-					.current-locale {
-						font-weight: bold;
-					}
-					p {
-						margin: 0;
-						cursor: pointer;
-					}
-				}
-				.copyright-text {
-					margin: 0;
-					font-size: 14px;
-					font-weight: bold;
-					letter-spacing: 1px;
-					color: $secondaryColor;
-				}
-			}
-			@media only screen and (max-width: $mobile) {
-				.body-footer-card {
-					flex-direction: column;
-					.lang-switcher {
-						justify-content: center;
-					}
-					.copyright-text {
-						order: -1;
-						text-align: center;
-						margin-bottom: 8px;
-					}
-				}
-			}
 		}
 		.content-blur {
 			filter: blur(2px);
@@ -344,28 +197,30 @@ $sidebarChildItemHeight: 48px;
 			}
 			.content {
 				padding-left: 16px + $sidebarMinimizeSize;
-				.body-footer-card {
-					.copyright-text, .lang-switcher {
-						font-size: 12px;
-					}
-				}
 			}
 		}
 	}
-	@media only screen and (max-width: $mobile){
-		.appbar {
-			height: 56px;
-			padding: 0 16px;
-			.user-loggedin {
-				.user-loggedin-dialog {
-					top: 48px;
-				}
-				&:focus .user-loggedin-dialog {
-					top: 56px;
-				}
-			}
+	.body-column {
+		display: flex;
+		padding: 16px 24px;
+		flex-direction: column;
+		height: calc(100% - 64px);
+		.body-column-content {
+			flex-grow: 1;
+			@include settings-container;
 		}
 	}
+	@media only screen and (max-width: $mobile) {
+		.body, .body-column {
+			height: calc(100% - 56px);
+		}
+	}
+}
+
+.root {
+	width: 100%;
+	height: 100%;
+	@include root-body;
 }
 
 :export {

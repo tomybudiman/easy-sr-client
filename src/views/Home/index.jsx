@@ -3,17 +3,20 @@ import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
 import useStateWithCallback from "use-state-with-callback";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
-import get from "lodash/get";
 
-import store from "../../state";
 import history from "../../utils/history";
-import {logoutMethod} from "../Auth/fetch";
-import sidebarJson from "../../data/sidebar";
-import {changeLocale} from "../../state/actions";
 import Translator from "../../components/Translator";
-import {sidebarChildItemHeight} from "./index.scss";
+import DashboardAppbar from "../../components/DashboardAppbar";
+import DashboardFooter from "../../components/DashboardFooter";
+import PageRouteHeader from "../../components/PageRouteHeader";
+import DashboardSidebar from "../../components/DashboardSidebar";
 
 // Import Components
+const Organization = Loadable({
+  loader: () => import("./Organization"),
+  loading: () => <React.Fragment/>,
+});
+
 const User = Loadable({
   loader: () => import("./User"),
   loading: () => <React.Fragment/>,
@@ -34,81 +37,14 @@ const SurveyDisclosure = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+const Settings = Loadable({
+  loader: () => import("./Settings"),
+  loading: () => <React.Fragment/>,
+});
+
 const rootRoute = history.location.pathname.match(/^\/[^/]+/)[0];
 
 // Core Components
-const SidebarItem = ({data, onClick, toggleSidebarItemCb}) => {
-  const itemHeight = parseFloat(sidebarChildItemHeight);
-  return(
-    <div className="navbar-item">
-      <div className="first-row" onClick={e => {
-        if(typeof onClick === "function"){
-          onClick({e, data});
-        }
-      }}>
-        <p>
-          {data.iconClassname ? <i className={data.iconClassname}/> : null}
-          <Translator id={data.label}/>
-        </p>
-        {data.child && data.isExpanded !== undefined ? (
-          <button onClick={e => toggleSidebarItemCb(data.id)} className={data.isExpanded ? "expanded" : null}>
-            <i className={data.isExpanded ? "fas fa-angle-left fas-rotated" : "fas fa-angle-left"}/>
-          </button>
-        ) : null}
-      </div>
-      {data.child && data.isExpanded !== undefined ? (
-        <div className="child-item" style={data.isExpanded ? {height: itemHeight * data.child.length} : {height: 0}}>
-          {data.child.map((each, i) => {
-            if(each.path){
-              return(
-                <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i} onClick={e => onClick({e, data: each})}>
-                  <SidebarItem data={each}/>
-                </Link>
-              )
-            }else{
-              return <SidebarItem data={each} key={i} onClick={e => onClick({e: e.e, data: each})}/>
-            }
-          })}
-        </div>
-      ) : null}
-    </div>
-  )
-};
-
-const SidebarContent = ({visible, onClickSidebar}) => {
-  const [sidebar, setSidebar] = useState(sidebarJson);
-  const updateSidebar = (objKey) => {
-    const newSidebar = sidebar.map(each => {
-      if(each.id === objKey){
-        return {...each, isExpanded: !each.isExpanded}
-      }
-      return each
-    });
-    setSidebar(newSidebar);
-  };
-  return(
-    <div className={visible ? "navbar-content navbar-content-visible" : "navbar-content"}>
-      {sidebar.map((each, i) => {
-        if(each.path){
-          return(
-            <Link to={rootRoute.replace(/\/$/, "")+each.path} key={i}>
-              <SidebarItem data={each}  onClick={e => onClickSidebar(e)} toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
-            </Link>
-          )
-        }else{
-          return(
-            <SidebarItem
-              key={i}
-              data={each}
-              onClick={e => onClickSidebar(e)}
-              toggleSidebarItemCb={objKey => updateSidebar(objKey)}/>
-          )
-        }
-      })}
-    </div>
-  )
-};
-
 const HomeModal = ({homeModal, toggleModal}) => {
   const [modalSize, setModalSize] = useState("md");
   const RenderComponent = () => {
@@ -136,21 +72,12 @@ const HomeModal = ({homeModal, toggleModal}) => {
   )
 };
 
-const Home = () => {
-  const user = get(store.getState().reducerAuth, "userTokenData.user") || {};
-  const [activeLocale, setActiveLocale] = useState(store.getState().reducerLocale.locale);
+const HomeBody = ({openHomeModal, prevEvent}) => {
   const [screenMobile, setScreenMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useStateWithCallback(!screenMobile, () => {
     document.querySelector(".sidebar").scrollTo(0, 0);
   });
-  const [homeModal, setHomeModal] = useState({state: false, id: null});
-  const [prevEvent, setNewEvent] = useState(null);
-  const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "editUser", "createDepartment"];
-    if(allowedModalId.includes(data.id)){
-      setHomeModal({state: true, id: data.id});
-    }
-  };
+  // Methods
   const sidebarOnClickHandler = data => {
     const closeModalScopeId = ["dashboard", "listUser", "createUser", "department", "materiality", "disclosure"];
     openHomeModal(data);
@@ -158,22 +85,7 @@ const Home = () => {
       setSidebarOpen(!sidebarOpen);
     }
   };
-  const toggleModal = event => {
-    setHomeModal({...homeModal, state: !homeModal.state});
-    setNewEvent(event);
-  };
-  const getSimpleName = () => {
-    if(user.fullname){
-      const splitFullname = user.fullname.split(" ").map(each => each.slice(0, 1));
-      return splitFullname.filter((each, i) => i === 0 || i === splitFullname.length - 1);
-    }else{
-      return null
-    }
-  };
-  store.subscribe(() => {
-    setActiveLocale(store.getState().reducerLocale.locale);
-  });
-  // Window Resize Event
+  // Resize Event
   window.addEventListener("resize", () => {
     setScreenMobile(window.innerWidth <= 768);
     if(sidebarOpen){
@@ -181,69 +93,66 @@ const Home = () => {
     }
   });
   return(
+    <div className="body">
+      <DashboardSidebar setSidebarOpen={setSidebarOpen} sidebarOpen={sidebarOpen} sidebarOnClickHandler={sidebarOnClickHandler}/>
+      <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
+        <div className="content-body">
+          <Router history={history}>
+            <Switch>
+              <Route exact path={`${rootRoute}/organization`} render={() => <Organization onClickEvent={openHomeModal}/>}/>
+              <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
+              <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
+              <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
+              <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
+              <Route render={() => <Redirect to={rootRoute}/>}/>
+            </Switch>
+          </Router>
+        </div>
+        <DashboardFooter/>
+      </div>
+    </div>
+  )
+};
+
+const HomeColumnWrapper = ({children}) => (
+  <div className="body-column">
+    <div className="body-column-content">
+      <PageRouteHeader>
+        <Translator id="settingsGroup.settings"/>
+      </PageRouteHeader>
+      {children}
+    </div>
+    <DashboardFooter/>
+  </div>
+);
+
+const Home = () => {
+  const [homeModal, setHomeModal] = useState({state: false, id: null});
+  const [prevEvent, setNewEvent] = useState(null);
+  // Methods
+  const openHomeModal = ({data}) => {
+    const allowedModalId = ["createUser", "editUser", "createDepartment"];
+    if(allowedModalId.includes(data.id)){
+      setHomeModal({state: true, id: data.id});
+    }
+  };
+  const toggleModal = event => {
+    setHomeModal({...homeModal, state: !homeModal.state});
+    setNewEvent(event);
+  };
+  return(
     <React.Fragment>
       <HomeModal homeModal={homeModal} toggleModal={toggleModal}/>
       <div className="root">
-        <div className="appbar">
-          <div className="user-loggedin" tabIndex="-1">
-            <div className="selector-container">
-              <div className="user-logo-text">
-                <p>{getSimpleName()}</p>
-              </div>
-              <div className="user-identity">
-                <p>{user.fullname}</p>
-                <button>
-                  <i className="fas fa-angle-down"/>
-                </button>
-              </div>
-            </div>
-            <div className="user-loggedin-dialog">
-              <p onClick={logoutMethod}><Translator id="commonGroup.logout"/></p>
-            </div>
-          </div>
-        </div>
-        <div className="body">
-          <div
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className={screenMobile && sidebarOpen ? "overlay-dark" : "overlay-dark overlay-dark-inactive"}/>
-          <div className={sidebarOpen ? "sidebar" : "sidebar sidebar-inactive"}>
-            <button
-              title={sidebarOpen ? "Minimize" : "Open"}
-              onClick={e => setSidebarOpen(!sidebarOpen)}
-              className={sidebarOpen ? "sidebar-toggle toggle-close" : "sidebar-toggle"}>
-              <hr/><hr/><hr/>
-            </button>
-            <hr className="divider" style={sidebarOpen ? {opacity: 1} : {opacity: 0}}/>
-            <SidebarContent visible={sidebarOpen} onClickSidebar={data => sidebarOnClickHandler(data)}/>
-          </div>
-          <div className={screenMobile && sidebarOpen ? "content content-blur" : "content"}>
-            <div className="content-body">
-              <Router history={history}>
-                <Switch>
-                  <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-                  <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal}/>}/>
-                  <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
-                  <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
-                  <Route render={() => <Redirect to={rootRoute}/>}/>
-                </Switch>
-              </Router>
-            </div>
-            <div className="body-footer-card">
-              <div className="lang-switcher">
-                <p
-                  className={activeLocale === "id" ? "current-locale" : null}
-                  onClick={() => store.dispatch(changeLocale("id"))}>ID</p>
-                <span className="separator">&bull;</span>
-                <p
-                  className={activeLocale === "en" ? "current-locale" : null}
-                  onClick={() => store.dispatch(changeLocale("en"))}>EN</p>
-              </div>
-              <p className="copyright-text">
-                Brand &copy; {new Date().getFullYear()} <Translator id="commonGroup.allRightsReserved"/>
-              </p>
-            </div>
-          </div>
-        </div>
+        <DashboardAppbar/>
+        <Router history={history}>
+          <Switch>
+            <Route exact path={`${rootRoute}/settings`} render={() => (
+              <HomeColumnWrapper><Settings/></HomeColumnWrapper>
+            )}/>
+            <Route path={rootRoute} render={() => <HomeBody prevEvent={prevEvent} openHomeModal={openHomeModal}/>}/>
+          </Switch>
+        </Router>
       </div>
     </React.Fragment>
   )

@@ -1,46 +1,61 @@
 [
   {
     "id": "dashboard",
+    "roles": [true],
     "label": "commonGroup.dashboard",
     "iconClassname": "fas fa-tachometer-alt",
     "path": "/"
   },
   {
+    "id": "organization",
+    "roles": ["superadmin"],
+    "label": "organizationGroup.organization",
+    "iconClassname": "fas fa-sitemap",
+    "path": "/organization"
+  },
+  {
     "id": "user",
+    "roles": ["org_admin"],
     "label": "userGroup.user",
     "iconClassname": "far fa-user",
     "isExpanded": false,
     "child": [
       {
         "id": "listUser",
+        "roles": "inherit",
         "label": "userGroup.list",
         "path": "/user"
       },
       {
         "id": "createUser",
+        "roles": "inherit",
         "label": "userGroup.createNew"
       }
     ]
   },
   {
     "id": "department",
+    "roles": ["org_admin"],
     "label": "departmentGroup.department",
     "iconClassname": "far fa-user-circle",
     "path": "/department"
   },
   {
     "id": "survey",
+    "roles": ["superadmin", "org_admin"],
     "label": "surveyGroup.survey",
     "iconClassname": "fas fa-poll",
     "isExpanded": false,
     "child": [
       {
         "id": "materiality",
+        "roles": "inherit",
         "label": "surveyGroup.materiality",
         "path": "/survey/materiality"
       },
       {
         "id": "disclosure",
+        "roles": "inherit",
         "label": "surveyGroup.disclosure",
         "path": "/survey/disclosure"
       }

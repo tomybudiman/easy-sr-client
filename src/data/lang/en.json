@@ -9,6 +9,7 @@
     "choseAnOption": "Please choose an option",
     "fieldEmptyInvalid": "Field cannot be empty",
     "actionProhibited": "Action Prohibited",
+    "passwordCheck": "Recheck Your Password",
     "passwordInvalid": "Password must be at least 8 characters long & contain numbers"
   },
   "commonGroup": {
@@ -18,11 +19,15 @@
     "logout": "Logout",
     "locked": "Locked",
     "active": "Active",
+    "settings": "Settings",
     "inactive": "Inactive",
     "unlocked": "Unlocked",
     "language": "Language",
     "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
+  },
+  "organizationGroup": {
+    "organization": "Organization"
   },
   "userGroup": {
     "user": "User",
@@ -52,5 +57,11 @@
     "disclosure": "Disclosure",
     "materialitySurvey": "Materiality Survey",
     "disclosureSurvey": "Disclosure Survey"
+  },
+  "settingsGroup": {
+    "settings": "Settings",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password"
   }
 }

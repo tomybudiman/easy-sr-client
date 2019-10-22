@@ -9,6 +9,7 @@
     "choseAnOption": "Harap pilih pilihan",
     "fieldEmptyInvalid": "Isian tidak diperbolehkan kosong",
     "actionProhibited": "Tindakan Dilarang",
+    "passwordCheck": "Periksa Kembali Kata Sandi Anda",
     "passwordInvalid": "Kata sandi harus memiliki panjang minimal 8 karakter & mengandung angka"
   },
   "commonGroup": {
@@ -18,11 +19,15 @@
     "logout": "Keluar",
     "locked": "Terkunci",
     "active": "Aktif",
+    "settings": "Pengaturan",
     "inactive": "Tidak Aktif",
     "unlocked": "Aktif",
     "language": "Bahasa",
     "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
+  },
+  "organizationGroup": {
+    "organization": "Organisasi"
   },
   "userGroup": {
     "user": "Pengguna",
@@ -52,5 +57,11 @@
     "disclosure": "Disclosure",
     "materialitySurvey": "Materiality Survei",
     "disclosureSurvey": "Disclosure Survei"
+  },
+  "settingsGroup": {
+    "settings": "Pengaturan",
+    "changePassword": "Ganti Kata Sandi",
+    "currentPassword": "Kata Sandi Sekarang",
+    "newPassword": "Kata Sandi Baru"
   }
 }

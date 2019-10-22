@@ -17,12 +17,12 @@ export const readUrlQueryValue = name => {
   return decodeURIComponent(result[2].replace(/\+/g, ' '));
 };
 
-export const handleError = (err, reject) => {
+export const handleError = (err, reject, opt = {}) => {
   console.error(err);
   if(get(err, "response.status") === 401){
     logoutMethod();
   }else{
-    NotificationManager.error(get(err, "response.data.message") || "Network error!");
+    NotificationManager.error(opt.errMsg || get(err, "response.data.message") || "Network error!");
     reject(err);
   }
 };

@@ -14,9 +14,10 @@
 		align-self: center;
 		letter-spacing: 1px;
 		color: $secondaryColor;
-		p, span {
+		p, a, span {
 			margin: 0;
 			display: inline-block;
+			color: $secondaryColor;
 		}
 		span {
 			margin: 0 8px;

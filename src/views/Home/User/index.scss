@@ -41,6 +41,9 @@
 			display: flex;
 			position: relative;
 			align-items: center;
+			input {
+				padding-right: 40px;
+			}
 			button {
 				right: 8px;
 				padding: 0;

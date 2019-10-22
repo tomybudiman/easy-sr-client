@@ -139,12 +139,13 @@ export const EditUserModal = ({onClickClose}) => {
   const [isUserLocked, setUserLock] = useState(is_locked);
   const [roleInput, setRoleInput] = useState(assignedRoles);
   const [isUpdatingRoles, setUpdateStatus] = useState(false);
+  const isSelectedLoggedin = get(store.getState(), "reducerAuth.userTokenData.user.id") === id;
   const isSuperadmin = roleInput.hasOwnProperty("superadmin");
   // Methods
   const toggleRoleChip = roleId => {
     const baseObj = {...roleInput, [roleId]: {...roleInput[roleId], value: !roleInput[roleId].value}};
     setRoleInput(baseObj);
-    if(isSuperadmin){
+    if(isSuperadmin || isSelectedLoggedin){
       setTimeout(() => {
         setRoleInput({...roleInput, [roleId]: {...roleInput[roleId], value: !baseObj[roleId].value}});
         NotificationManager.warning(get(localeData[store.getState().reducerLocale.locale], "warning.actionProhibited"));
@@ -170,15 +171,24 @@ export const EditUserModal = ({onClickClose}) => {
     }
   };
   const toggleLockSwicth = () => {
-    setUserLock(!isUserLocked);
-    toggleLockUser({id}, isUserLocked ? "unlock" : "lock").then(() => {
+    const initialValue = isUserLocked;
+    setUserLock(!initialValue);
+    if(isSelectedLoggedin){
       setTimeout(() => {
-        NotificationManager.success(get(localeData[store.getState().reducerLocale.locale], "success.success"));
+        setUserLock(initialValue);
+        NotificationManager.warning(get(localeData[store.getState().reducerLocale.locale], "warning.actionProhibited"));
       }, 1000);
-    }).catch(() => {
-      setUserLock(!isUserLocked);
-    });
+    }else{
+      toggleLockUser({id}, isUserLocked ? "unlock" : "lock").then(() => {
+        setTimeout(() => {
+          NotificationManager.success(get(localeData[store.getState().reducerLocale.locale], "success.success"));
+        }, 1000);
+      }).catch(() => {
+        setUserLock(!isUserLocked);
+      });
+    }
   };
+  // Render
   return(
     <React.Fragment>
       <ModalHeader className="home-modal-header" tag="div">
