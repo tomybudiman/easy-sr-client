@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
+import {Router, Route, Switch, Redirect} from "react-router-dom";
 import useStateWithCallback from "use-state-with-callback";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
@@ -10,6 +10,7 @@ import DashboardAppbar from "../../components/DashboardAppbar";
 import DashboardFooter from "../../components/DashboardFooter";
 import PageRouteHeader from "../../components/PageRouteHeader";
 import DashboardSidebar from "../../components/DashboardSidebar";
+import SafeAccessRoute from "../../components/Helpers/SafeAccessRoute";
 
 // Import Components
 const Organization = Loadable({
@@ -114,12 +115,10 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
   )
 };
 
-const HomeColumnWrapper = ({children}) => (
+const HomeColumnWrapper = ({children, title}) => (
   <div className="body-column">
     <div className="body-column-content">
-      <PageRouteHeader>
-        <Translator id="settingsGroup.settings"/>
-      </PageRouteHeader>
+      {title && typeof title === "string" ? <PageRouteHeader><Translator id={title}/></PageRouteHeader> : null}
       {children}
     </div>
     <DashboardFooter/>
@@ -147,8 +146,11 @@ const Home = () => {
         <DashboardAppbar/>
         <Router history={history}>
           <Switch>
-            <Route exact path={`${rootRoute}/settings`} render={() => (
-              <HomeColumnWrapper><Settings/></HomeColumnWrapper>
+            <SafeAccessRoute exact path={`${rootRoute}/settings`} render={() => (
+              <HomeColumnWrapper title="settingsGroup.settings"><Settings/></HomeColumnWrapper>
+            )}/>
+            <Route exact path={`${rootRoute}/unauthorized`} render={() => (
+              <HomeColumnWrapper><h1>404</h1></HomeColumnWrapper>
             )}/>
             <Route path={rootRoute} render={() => <HomeBody prevEvent={prevEvent} openHomeModal={openHomeModal}/>}/>
           </Switch>
