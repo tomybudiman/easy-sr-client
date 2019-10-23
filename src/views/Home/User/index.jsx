@@ -2,18 +2,18 @@ import React, {Component, useState} from "react";
 import {
   ModalBody, ModalHeader, ModalFooter, FormGroup, FormFeedback, FormInput, Button as ButtonShards
 } from "shards-react";
-import {isEmpty, get, difference} from "lodash";
 import {NotificationManager} from "react-notifications";
+import {isEmpty, get, difference} from "lodash";
 import Button from "@material-ui/core/Button";
 import MaterialTable from "material-table";
+import moment from "moment";
 import uuid from "uuidv4";
 
 import store from "../../../state";
-import Translator, {localeData} from "../../../components/Translator";
 import {setSelectedUserEdit} from "../../../state/actions";
+import Translator, {localeData} from "../../../components/Translator";
 import {getUsers, createUser, updateUserRole, toggleLockUser} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
-import moment from "moment";
 
 const getRoleAlias = id => {
   switch(id){

@@ -62,6 +62,10 @@ const HomeModal = ({homeModal, toggleModal}) => {
         setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
         return <CreateDepartmentModal onClickClose={toggleModal}/>;
+      case "createMateriality":
+        setModalSize("lg");
+        const {CreateMaterialityModal} = require("./SurveyMateriality");
+        return <CreateMaterialityModal onClickClose={toggleModal}/>;
       default:
         return null
     }
@@ -100,10 +104,18 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
         <div className="content-body">
           <Router history={history}>
             <Switch>
-              <Route exact path={`${rootRoute}/organization`} render={() => <Organization onClickEvent={openHomeModal}/>}/>
-              <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-              <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-              <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
+              <Route exact path={`${rootRoute}/organization`} render={() => (
+                <Organization onClickEvent={openHomeModal}/>
+              )}/>
+              <Route exact path={`${rootRoute}/user`} render={() => (
+                <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
+              <Route exact path={`${rootRoute}/department`} render={() => (
+                <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
+              <Route exact path={`${rootRoute}/survey/materiality`} component={() => (
+                <SurveyMateriality onClickEvent={openHomeModal}/>
+              )}/>
               <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
               <Route render={() => <Redirect to={rootRoute}/>}/>
             </Switch>
@@ -130,7 +142,7 @@ const Home = () => {
   const [prevEvent, setNewEvent] = useState(null);
   // Methods
   const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "editUser", "createDepartment"];
+    const allowedModalId = ["createUser", "editUser", "createDepartment", "createMateriality"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
     }
