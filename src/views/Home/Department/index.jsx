@@ -1,15 +1,26 @@
 import React, {useState, Component} from "react";
 import MaterialTable from "material-table";
-import {FormGroup, FormInput, ModalBody, ModalFooter, ModalHeader, Button as ButtonShards} from "shards-react";
+import {FormGroup, FormInput, FormFeedback, ModalBody, ModalFooter, ModalHeader, Button as ButtonShards} from "shards-react";
 import Button from "@material-ui/core/Button";
+import {get, isEmpty} from "lodash";
 import uuid from "uuidv4";
 
 import Translator from "../../../components/Translator";
+import {getDepartments, createDepartment} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
 class Department extends Component {
   constructor(props){
     super(props);
+    this.tableRef = null;
+  }
+  // Component Lifecycle
+  componentDidUpdate(prevProps){
+    if(get(prevProps, "prevEvent.uid") !== get(this.props, "prevEvent.uid")){
+      if(get(this.props, "prevEvent.type") === "createDepartment"){
+        setTimeout(this.tableRef.onQueryChange, 0);
+      }
+    }
   }
   render(){
     const {onClickEvent} = this.props;
@@ -34,16 +45,27 @@ class Department extends Component {
         </div>
       )
     };
+    const data = query => {
+      return new Promise(resolve => {
+        getDepartments().then(res => resolve({
+          data: res.rows,
+          page: res.page - 1,
+          totalCount: res.count
+        }));
+      });
+    };
     return(
       <React.Fragment>
         <PageRouteHeader>
           <Translator id="departmentGroup.department"/>
         </PageRouteHeader>
         <MaterialTable
+          data={data}
           style={tableStyle}
           options={tableOptions}
           columns={tableColumns}
-          components={tableComponents}/>
+          components={tableComponents}
+          tableRef={e => this.tableRef = e}/>
       </React.Fragment>
     )
   }
@@ -51,35 +73,29 @@ class Department extends Component {
 
 export const CreateDepartmentModal = ({onClickClose}) => {
   const [formField, setFormField] = useState({
-    departmentName: {value: "", isValid: true},
-    departmentId: {value: "", isValid: true}
+    departmentName: {value: "", invalid: false}
   });
   const updateFormField = ({target}) => {
-    const idValue = value => {
-      return value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
-    };
-    const createObj = (baseObj = formField, key, value) => ({
-      ...baseObj,
-      [key || target.name]: {
-        ...baseObj[key || target.name],
-        value: value || target.value
-      }
-    });
-    if(formField[target.name].isValid){
-    }else{
-    }
-    switch(target.name){
-      case "departmentName":
-        const value = target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
-        setFormField(createObj(createObj(), "departmentId", value));
-        break;
-      case "departmentId":
-      default:
-        setFormField(createObj(createObj(), target.name, target.value));
-        break;
+    if(Object.keys(formField).includes(target.name)){
+      const value = target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
+      setFormField({...formField, [target.name]: {value, invalid: isEmpty(value)}});
     }
   };
-  const checkFormThenSubmit = () => {};
+  const checkFormThenSubmit = () => {
+    const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
+      return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
+    }, {});
+    const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
+    if(isFormValid){
+      createDepartment({name: formField.departmentName.value}).then(res => {
+        if(res.name === formField.departmentName.value){
+          onClickClose({type: "createDepartment", uid: uuid()});
+        }
+      });
+    }else{
+      setFormField(newFormField);
+    }
+  };
   return(
     <React.Fragment>
       <ModalHeader className="home-modal-header" tag="div">
@@ -96,19 +112,13 @@ export const CreateDepartmentModal = ({onClickClose}) => {
           <FormInput
             name="departmentName"
             id="input-new-department-name"
-            invalid={!formField.departmentName.isValid}
+            invalid={formField.departmentName.invalid}
             onChange={updateFormField}/>
-        </FormGroup>
-        <FormGroup className="input-new-department-id">
-          <label htmlFor="input-new-department-id">
-            <Translator id="departmentGroup.departmentId"/>
-          </label>
-          <FormInput
-            name="departmentId"
-            id="input-new-department-id"
-            value={formField.departmentId.value}
-            invalid={!formField.departmentId.isValid}
-            onChange={updateFormField}/>
+          {formField.departmentName.invalid ? (
+            <FormFeedback tag="p" valid={false}>
+              <Translator id="warning.fieldEmptyInvalid"/>
+            </FormFeedback>
+          ) : null}
         </FormGroup>
       </ModalBody>
       <ModalFooter>

@@ -1,6 +1,9 @@
 import {NotificationManager} from "react-notifications";
+import flatten from "lodash/flatten";
 import get from "lodash/get";
 
+import routesJson from "../data/routes";
+import sidebarJson from "../data/sidebar";
 import {logoutMethod} from "../views/Auth/fetch";
 
 export const readUrlQueryValue = name => {
@@ -25,4 +28,19 @@ export const handleError = (err, reject, opt = {}) => {
     NotificationManager.error(opt.errMsg || get(err, "response.data.message") || "Network error!");
     reject(err);
   }
+};
+
+export const getRoutes = () => {
+  const sidebarRoutes = flatten(sidebarJson.reduce((prevData, iterationObj) => {
+    if(iterationObj.child){
+      let duplicateObj = {...iterationObj};
+      delete duplicateObj.child;
+      return [...prevData, [duplicateObj, ...iterationObj.child]];
+    }else{
+      return [...prevData, iterationObj];
+    }
+  }, [])).map(each => {
+    return each.path ? {...each, path: `/dashboard${each.path}`} : each;
+  });
+  return [...routesJson, ...sidebarRoutes];
 };

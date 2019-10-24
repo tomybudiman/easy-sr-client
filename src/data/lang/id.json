@@ -26,6 +26,9 @@
     "dashboard": "Dashboard",
     "allRightsReserved": "Hak Cipta Dilindungi"
   },
+  "adminGroup": {
+    "admin": "Admin"
+  },
   "organizationGroup": {
     "organization": "Organisasi"
   },
@@ -55,8 +58,9 @@
     "survey": "Survei",
     "materiality": "Materiality",
     "disclosure": "Disclosure",
-    "materialitySurvey": "Materiality Survei",
-    "disclosureSurvey": "Disclosure Survei"
+    "createMateriality": "Buat Materiality",
+    "materialitySurvey": "Survei Materiality",
+    "disclosureSurvey": "Survei Disclosure"
   },
   "settingsGroup": {
     "settings": "Pengaturan",

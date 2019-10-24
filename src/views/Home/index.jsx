@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Router, Route, Link, Switch, Redirect} from "react-router-dom";
+import {Router, Route, Switch, Redirect} from "react-router-dom";
 import useStateWithCallback from "use-state-with-callback";
 import Loadable from "react-loadable";
 import {Modal} from "shards-react";
@@ -10,6 +10,7 @@ import DashboardAppbar from "../../components/DashboardAppbar";
 import DashboardFooter from "../../components/DashboardFooter";
 import PageRouteHeader from "../../components/PageRouteHeader";
 import DashboardSidebar from "../../components/DashboardSidebar";
+import SafeAccessRoute from "../../components/Helpers/SafeAccessRoute";
 
 // Import Components
 const Organization = Loadable({
@@ -61,6 +62,10 @@ const HomeModal = ({homeModal, toggleModal}) => {
         setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
         return <CreateDepartmentModal onClickClose={toggleModal}/>;
+      case "createMateriality":
+        setModalSize("lg");
+        const {CreateMaterialityModal} = require("./SurveyMateriality");
+        return <CreateMaterialityModal onClickClose={toggleModal}/>;
       default:
         return null
     }
@@ -99,10 +104,21 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
         <div className="content-body">
           <Router history={history}>
             <Switch>
-              <Route exact path={`${rootRoute}/organization`} render={() => <Organization onClickEvent={openHomeModal}/>}/>
-              <Route exact path={`${rootRoute}/user`} render={() => <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-              <Route exact path={`${rootRoute}/department`} render={() => <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>}/>
-              <Route exact path={`${rootRoute}/survey/materiality`} component={SurveyMateriality}/>
+              <Route exact path={`${rootRoute}/organization`} render={() => (
+                <Organization onClickEvent={openHomeModal}/>
+              )}/>
+              <Route exact path={`${rootRoute}/admin`} render={() => (
+                <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
+              <Route exact path={`${rootRoute}/user`} render={() => (
+                <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
+              <Route exact path={`${rootRoute}/department`} render={() => (
+                <Department onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
+              <Route exact path={`${rootRoute}/survey/materiality`} component={() => (
+                <SurveyMateriality onClickEvent={openHomeModal}/>
+              )}/>
               <Route exact path={`${rootRoute}/survey/disclosure`} component={SurveyDisclosure}/>
               <Route render={() => <Redirect to={rootRoute}/>}/>
             </Switch>
@@ -114,12 +130,10 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
   )
 };
 
-const HomeColumnWrapper = ({children}) => (
+const HomeColumnWrapper = ({children, title}) => (
   <div className="body-column">
     <div className="body-column-content">
-      <PageRouteHeader>
-        <Translator id="settingsGroup.settings"/>
-      </PageRouteHeader>
+      {title && typeof title === "string" ? <PageRouteHeader><Translator id={title}/></PageRouteHeader> : null}
       {children}
     </div>
     <DashboardFooter/>
@@ -131,7 +145,7 @@ const Home = () => {
   const [prevEvent, setNewEvent] = useState(null);
   // Methods
   const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "editUser", "createDepartment"];
+    const allowedModalId = ["createUser", "editUser", "createDepartment", "createMateriality"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
     }
@@ -147,8 +161,11 @@ const Home = () => {
         <DashboardAppbar/>
         <Router history={history}>
           <Switch>
-            <Route exact path={`${rootRoute}/settings`} render={() => (
-              <HomeColumnWrapper><Settings/></HomeColumnWrapper>
+            <SafeAccessRoute exact path={`${rootRoute}/settings`} render={() => (
+              <HomeColumnWrapper title="settingsGroup.settings"><Settings/></HomeColumnWrapper>
+            )}/>
+            <Route exact path={`${rootRoute}/unauthorized`} render={() => (
+              <HomeColumnWrapper><h1>404</h1></HomeColumnWrapper>
             )}/>
             <Route path={rootRoute} render={() => <HomeBody prevEvent={prevEvent} openHomeModal={openHomeModal}/>}/>
           </Switch>

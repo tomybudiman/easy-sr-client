@@ -1,0 +1,17 @@
+.survey-datatable-toolbar {
+	top: 0;
+	height: 64px;
+	display: flex;
+	padding: 0 16px;
+	align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+	.survey-datatable-toolbar {
+		height: 48px;
+		position: relative;
+		button {
+			margin: auto;
+		}
+	}
+}

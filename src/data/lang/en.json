@@ -26,6 +26,9 @@
     "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
   },
+  "adminGroup": {
+    "admin": "Admin"
+  },
   "organizationGroup": {
     "organization": "Organization"
   },
@@ -55,6 +58,7 @@
     "survey": "Survey",
     "materiality": "Materiality",
     "disclosure": "Disclosure",
+    "createMateriality": "Create Materiality",
     "materialitySurvey": "Materiality Survey",
     "disclosureSurvey": "Disclosure Survey"
   },

@@ -13,9 +13,17 @@ const DashboardAppbar = () => {
     ...get(store.getState().reducerAuth, "userTokenData.user") || {},
     roles: get(store.getState().reducerAuth, "userTokenData.roles") || []
   };
-  const isSuperadmin = user.roles.includes("superadmin");
   const rootRoute = history.location.pathname.match(/^\/[^/]+/)[0];
   // Methods
+  const getRoleLabel = () => {
+    if(user.roles.includes("superadmin")){
+      return "Superadmin"
+    }else if(user.roles.includes("org_admin")){
+      return "Admin"
+    }else{
+      return null
+    }
+  };
   const getSimpleName = () => {
     if(user.fullname){
       const splitFullname = user.fullname.split(" ").map(each => each.slice(0, 1));
@@ -32,9 +40,9 @@ const DashboardAppbar = () => {
           <div className="user-logo-text">
             <p>{getSimpleName()}</p>
           </div>
-          <div className={isSuperadmin ? "user-identity superadmin-role" : "user-identity"}>
+          <div className={getRoleLabel() ? "user-identity special-role" : "user-identity"}>
             <p>{user.fullname}</p>
-            {isSuperadmin ? <p>Superadmin</p> : null}
+            <p>{getRoleLabel()}</p>
           </div>
           <button>
             <i className="fas fa-angle-down"/>
