@@ -10,6 +10,7 @@ import moment from "moment";
 import uuid from "uuidv4";
 
 import store from "../../../state";
+import history from "../../../utils/history";
 import {setSelectedUserEdit} from "../../../state/actions";
 import Translator, {localeData} from "../../../components/Translator";
 import {getUsers, createUser, updateUserRole, toggleLockUser} from "./fetch";
@@ -127,6 +128,34 @@ class User extends Component {
   }
 }
 
+const RenderInputRole = ({roleInput, toggleRoleChip, formStatus}) => {
+  const routeType = history.location.pathname.match(/\/[^\/]+$/)[0].slice(1);
+  return routeType !== "admin" ? (
+    <FormGroup className="input-new-user-role">
+      <label>
+        <Translator id="userGroup.role"/>
+        {formStatus.role.invalid ? (
+          <FormFeedback tag="p" valid={false}>
+            <Translator id="warning.choseAnOption"/>
+          </FormFeedback>
+        ) : null}
+      </label>
+      <div className="custom-input-form">
+        {Object.keys(roleInput).map((each, i) => {
+          return(
+            <div
+              key={i}
+              onClick={() => toggleRoleChip(each)}
+              className={roleInput[each].value ? "chip chip-active" : "chip"}>
+              <p className="label">{roleInput[each].label}</p>
+            </div>
+          )
+        })}
+      </div>
+    </FormGroup>
+  ) : null;
+};
+
 export const EditUserModal = ({onClickClose}) => {
   const {id, roles, is_locked} = store.getState().reducerRouteUser.selectedUserEdit;
   const assignedRoles = roles.reduce((prevObj, {name}) => ({
@@ -237,6 +266,10 @@ export const EditUserModal = ({onClickClose}) => {
 };
 
 export const CreateUserModal = ({onClickClose}) => {
+  const routeType = history.location.pathname.match(/\/[^\/]+$/)[0].slice(1);
+  // Overide Value
+  const initialUserRole = routeType === "admin" ? ["org_admin"] : null;
+  // State Management
   const [roleInput, setRoleInput] = useState({
     org_admin: {label: "Admin", value: false},
     org_developer: {label: "Developer", value: false},
@@ -246,7 +279,7 @@ export const CreateUserModal = ({onClickClose}) => {
     fullname: {value: null, invalid: false},
     email: {value: null, invalid: false},
     password: {value: null, invalid: false, isPassword: true},
-    role: {value: null, invalid: false}
+    role: {value: initialUserRole, invalid: false}
   });
   const [mainButtonDisabled, setButtonDisabled] = useState(false);
   // Functions
@@ -300,7 +333,6 @@ export const CreateUserModal = ({onClickClose}) => {
     updateFormStatus(tempFormStatus);
     if(isFormValid){
       setButtonDisabled(true);
-      const selectedNewRole = Object.keys(roleInput).filter(each => roleInput[each].value);
       try{
         const creatingUser = await createUser({
           email: formStatus.email.value,
@@ -310,9 +342,9 @@ export const CreateUserModal = ({onClickClose}) => {
         });
         const creatingUserRole = await updateUserRole({
           user_id: creatingUser.id,
-          roles: selectedNewRole
+          roles: formStatus.role.value
         });
-        if(creatingUserRole.result.length === selectedNewRole.length){
+        if(creatingUserRole.result.length === formStatus.role.value.length){
           onClickClose({type: "createUser", uid: uuid()});
         }
       }catch(err){
@@ -377,28 +409,7 @@ export const CreateUserModal = ({onClickClose}) => {
             </FormFeedback>
           ) : null}
         </FormGroup>
-        <FormGroup className="input-new-user-role">
-          <label>
-            <Translator id="userGroup.role"/>
-            {formStatus.role.invalid ? (
-              <FormFeedback tag="p" valid={false}>
-                <Translator id="warning.choseAnOption"/>
-              </FormFeedback>
-            ) : null}
-          </label>
-          <div className="custom-input-form">
-            {Object.keys(roleInput).map((each, i) => {
-              return(
-                <div
-                  key={i}
-                  onClick={() => toggleRoleChip(each)}
-                  className={roleInput[each].value ? "chip chip-active" : "chip"}>
-                  <p className="label">{roleInput[each].label}</p>
-                </div>
-              )
-            })}
-          </div>
-        </FormGroup>
+        <RenderInputRole roleInput={roleInput} toggleRoleChip={toggleRoleChip} formStatus={formStatus}/>
       </ModalBody>
       <ModalFooter>
         <ButtonShards

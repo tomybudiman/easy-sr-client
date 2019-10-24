@@ -26,6 +26,9 @@
     "dashboard": "Dashboard",
     "allRightsReserved": "All Rights Reserved"
   },
+  "adminGroup": {
+    "admin": "Admin"
+  },
   "organizationGroup": {
     "organization": "Organization"
   },

@@ -14,6 +14,13 @@
     "path": "/organization"
   },
   {
+    "id": "admin",
+    "roles": ["superadmin"],
+    "label": "adminGroup.admin",
+    "iconClassname": "far fa-user",
+    "path": "/admin"
+  },
+  {
     "id": "user",
     "roles": ["org_admin"],
     "label": "userGroup.user",

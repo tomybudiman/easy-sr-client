@@ -107,6 +107,9 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
               <Route exact path={`${rootRoute}/organization`} render={() => (
                 <Organization onClickEvent={openHomeModal}/>
               )}/>
+              <Route exact path={`${rootRoute}/admin`} render={() => (
+                <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
               <Route exact path={`${rootRoute}/user`} render={() => (
                 <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>
               )}/>
