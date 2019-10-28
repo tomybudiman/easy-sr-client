@@ -62,6 +62,10 @@ const HomeModal = ({homeModal, toggleModal}) => {
         setModalSize("md");
         const {CreateDepartmentModal} = require("./Department");
         return <CreateDepartmentModal onClickClose={toggleModal}/>;
+      case "editDepartment":
+        setModalSize("md");
+        const {EditDepartmentModal} = require("./Department");
+        return <EditDepartmentModal onClickClose={toggleModal}/>;
       case "createMateriality":
         setModalSize("lg");
         const {CreateMaterialityModal} = require("./SurveyMateriality");
@@ -145,7 +149,7 @@ const Home = () => {
   const [prevEvent, setNewEvent] = useState(null);
   // Methods
   const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "editUser", "createDepartment", "createMateriality"];
+    const allowedModalId = ["createUser", "editUser", "createDepartment", "createDepartment", "editDepartment", "createMateriality"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
     }

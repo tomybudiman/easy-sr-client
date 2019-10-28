@@ -5,9 +5,11 @@ import Button from "@material-ui/core/Button";
 import {get, isEmpty} from "lodash";
 import uuid from "uuidv4";
 
+import store from "../../../state";
 import Translator from "../../../components/Translator";
-import {getDepartments, createDepartment} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
+import {setSelectedDepartmentEdit} from "../../../state/actions";
+import {getDepartments, createDepartment, deleteDepartment, updateDepartment} from "./fetch";
 
 class Department extends Component {
   constructor(props){
@@ -17,7 +19,8 @@ class Department extends Component {
   // Component Lifecycle
   componentDidUpdate(prevProps){
     if(get(prevProps, "prevEvent.uid") !== get(this.props, "prevEvent.uid")){
-      if(get(this.props, "prevEvent.type") === "createDepartment"){
+      const arrOfEvents = ["createDepartment", "editDepartment", "deleteDepartment"];
+      if(arrOfEvents.includes(get(this.props, "prevEvent.type"))){
         setTimeout(this.tableRef.onQueryChange, 0);
       }
     }
@@ -34,7 +37,17 @@ class Department extends Component {
     };
     const tableColumns = [
       {title: "Name", field: "name", filtering: false, sorting: false},
-      {title: "ID", field: "id", filtering: false, sorting: false}
+      {title: "Number of Users", filtering: false, sorting: false},
+      {title: "Action", render: (raw) => {
+        return(
+          <Button className="datatable-action-button" onClick={e => {
+            store.dispatch(setSelectedDepartmentEdit(raw));
+            onClickEvent({e, data: {id: "editDepartment"}});
+          }}>
+            <i className="fas fa-cog"/>
+          </Button>
+        )
+      }, filtering: false, sorting: false}
     ];
     const tableComponents = {
       Toolbar: () => (
@@ -77,8 +90,8 @@ export const CreateDepartmentModal = ({onClickClose}) => {
   });
   const updateFormField = ({target}) => {
     if(Object.keys(formField).includes(target.name)){
-      const value = target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
-      setFormField({...formField, [target.name]: {value, invalid: isEmpty(value)}});
+      // const value = target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
+      setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
     }
   };
   const checkFormThenSubmit = () => {
@@ -123,6 +136,84 @@ export const CreateDepartmentModal = ({onClickClose}) => {
       </ModalBody>
       <ModalFooter>
         <ButtonShards className="custom-button" onClick={() => checkFormThenSubmit()}>
+          <Translator id="commonGroup.save"/>
+        </ButtonShards>
+      </ModalFooter>
+    </React.Fragment>
+  )
+};
+
+export const EditDepartmentModal = ({onClickClose}) => {
+  const {selectedDepartmentEdit} = store.getState().reducerRouteDepartment;
+  const [verifyDelete, setVerifyStatus] = useState(false);
+  const [formField, setFormField] = useState({
+    departmentName: {value: get(selectedDepartmentEdit, "name") || null, invalid: false}
+  });
+  // Methods
+  const onChangeHandler = ({target}) => {
+    if(target.name === "departmentName"){
+      setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
+    }
+  }
+  const checkFormThenSubmit = () => {
+    const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
+      return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
+    }, {});
+    const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
+    if(isFormValid){
+      updateDepartment({
+        name: newFormField.departmentName.value
+      }, selectedDepartmentEdit.id).then(res => {
+        if(res.updatedAt){
+          onClickClose({type: "editDepartment", uid: uuid()});
+        }
+      });
+    }else{
+      setFormField(newFormField);
+    }
+  };
+  const deleteDepartmentHandler = () => {
+    if(!verifyDelete){
+      setVerifyStatus(!verifyDelete);
+    }else{
+      deleteDepartment(selectedDepartmentEdit.id).then(res => {
+        if(res.deletedAt){
+          onClickClose({type: "deleteDepartment", uid: uuid()});
+        }
+      });
+    }
+  };
+  // Render
+  return(
+    <React.Fragment>
+      <ModalHeader className="home-modal-header" tag="div">
+        <Translator id="departmentGroup.editDepartment"/>
+        <button className="close-button" onClick={() => onClickClose({type: "editDepartment", uid: uuid()})}>
+          <i className="fas fa-times"/>
+        </button>
+      </ModalHeader>
+      <ModalBody className="edit-department">
+        <FormGroup>
+          <label>
+            <Translator id="departmentGroup.departmentName"/>
+          </label>
+          <FormInput
+            name="departmentName"
+            onChange={onChangeHandler}
+            value={formField.departmentName.value}
+            invalid={formField.departmentName.invalid}/>
+          {formField.departmentName.invalid ? (
+            <FormFeedback tag="p" valid={false}>
+              <Translator id="warning.fieldEmptyInvalid"/>
+            </FormFeedback>
+          ) : null}
+        </FormGroup>
+      </ModalBody>
+      <ModalFooter>
+        <ButtonShards theme="danger" className="custom-button" onClick={deleteDepartmentHandler}>
+          {verifyDelete ? <Translator id="warning.verifyAction"/> : <Translator id="commonGroup.remove"/>}
+        </ButtonShards>
+        <ButtonShards className="custom-button" onClick={checkFormThenSubmit}>
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>

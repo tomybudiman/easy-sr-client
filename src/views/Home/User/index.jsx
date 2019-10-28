@@ -90,16 +90,14 @@ class User extends Component {
       {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => {
         return moment(formatted.createdAt).format("DD MMMM YYYY HH:mm");
       }},
-      {title: "Actions", render: ({raw}) => {
-        return(
+      {title: "Action", render: ({raw}) => (
           <Button className="datatable-action-button" onClick={e => {
             store.dispatch(setSelectedUserEdit(raw));
             onClickEvent({e, data: {id: "editUser"}});
           }}>
             <i className="fas fa-user-cog"/>
           </Button>
-        )
-      }, filtering: false, sorting: false}
+      ), filtering: false, sorting: false}
     ];
     const tableComponents = {
       Toolbar: () => (
