@@ -37,12 +37,23 @@ class User extends Component {
   constructor(props){
     super(props);
     this.tableRef = null;
+    this.authRole = store.getState().reducerAuth.userTokenData.roles[0];
   }
   data(query){
     return new Promise(resolve => {
       getUsers().then(res => {
+        const filterUsers = res.rows.filter(({roles}) => {
+          switch(this.authRole){
+            case "superadmin":
+              return roles.map(({name}) => name).includes("org_admin");
+            case "org_admin":
+              return roles.map(({name}) => name).includes("org_surveyor");
+            default:
+              return [];
+          }
+        });
         resolve({
-          data: res.rows.map(each => {
+          data: filterUsers.map(each => {
             return {
               raw: each,
               formatted: {
@@ -60,6 +71,15 @@ class User extends Component {
       });
     });
   };
+  getPageHeaderTitle(){
+    switch(this.authRole){
+      case "superadmin":
+        return <Translator id="adminGroup.admin"/>
+      case "org_admin":
+      default:
+        return <Translator id="userGroup.user"/>
+    }
+  }
   // Component Lifecycle
   componentDidUpdate(prevProps){
     if(get(prevProps, "prevEvent.uid") !== get(this.props, "prevEvent.uid")){
@@ -111,9 +131,7 @@ class User extends Component {
     // return null
     return(
       <React.Fragment>
-        <PageRouteHeader>
-          <Translator id="userGroup.user"/>
-        </PageRouteHeader>
+        <PageRouteHeader>{this.getPageHeaderTitle()}</PageRouteHeader>
         <MaterialTable
           data={q => this.data(q)}
           style={tableStyle}

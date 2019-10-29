@@ -28,6 +28,11 @@ const Department = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+const SurveyForm = Loadable({
+  loader: () => import("./SurveyForm"),
+  loading: () => <React.Fragment/>,
+});
+
 const SurveyMateriality = Loadable({
   loader: () => import("./SurveyMateriality"),
   loading: () => <React.Fragment/>,
@@ -168,10 +173,15 @@ const Home = () => {
             <SafeAccessRoute exact path={`${rootRoute}/settings`} render={() => (
               <HomeColumnWrapper title="settingsGroup.settings"><Settings/></HomeColumnWrapper>
             )}/>
+            <SafeAccessRoute exact path={`${rootRoute}/survey/form`} render={() => (
+              <HomeColumnWrapper><SurveyForm/></HomeColumnWrapper>
+            )}/>
             <Route exact path={`${rootRoute}/unauthorized`} render={() => (
               <HomeColumnWrapper><h1>404</h1></HomeColumnWrapper>
             )}/>
-            <Route path={rootRoute} render={() => <HomeBody prevEvent={prevEvent} openHomeModal={openHomeModal}/>}/>
+            <SafeAccessRoute path={rootRoute} render={() => (
+              <HomeBody prevEvent={prevEvent} openHomeModal={openHomeModal}/>
+            )}/>
           </Switch>
         </Router>
       </div>

@@ -2,6 +2,10 @@
   {
     "id": "dashboard",
     "roles": [true],
+    "excludeRoles": {
+      "roles": ["org_surveyor"],
+      "redirect": "/dashboard/survey/form"
+    },
     "label": "commonGroup.dashboard",
     "iconClassname": "fas fa-tachometer-alt",
     "path": "/"
