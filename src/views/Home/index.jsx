@@ -18,6 +18,11 @@ const Organization = Loadable({
   loading: () => <React.Fragment/>,
 });
 
+const Industry = Loadable({
+  loader: () => import("./Industry"),
+  loading: () => <React.Fragment/>,
+});
+
 const User = Loadable({
   loader: () => import("./User"),
   loading: () => <React.Fragment/>,
@@ -55,6 +60,14 @@ const HomeModal = ({homeModal, toggleModal}) => {
   const [modalSize, setModalSize] = useState("md");
   const RenderComponent = () => {
     switch(homeModal.id){
+      case "createIndustry":
+        setModalSize("md");
+        const {CreateIndustryModal} = require("./Industry");
+        return <CreateIndustryModal onClickClose={toggleModal}/>;
+      case "editIndustry":
+        setModalSize("md");
+        const {EditIndustryModal} = require("./Industry");
+        return <EditIndustryModal onClickClose={toggleModal}/>;
       case "createUser":
         setModalSize("md");
         const {CreateUserModal} = require("./User");
@@ -116,6 +129,9 @@ const HomeBody = ({openHomeModal, prevEvent}) => {
               <Route exact path={`${rootRoute}/organization`} render={() => (
                 <Organization onClickEvent={openHomeModal}/>
               )}/>
+              <Route exact path={`${rootRoute}/industry`} render={() => (
+                <Industry onClickEvent={openHomeModal} prevEvent={prevEvent}/>
+              )}/>
               <Route exact path={`${rootRoute}/admin`} render={() => (
                 <User onClickEvent={openHomeModal} prevEvent={prevEvent}/>
               )}/>
@@ -154,7 +170,7 @@ const Home = () => {
   const [prevEvent, setNewEvent] = useState(null);
   // Methods
   const openHomeModal = ({data}) => {
-    const allowedModalId = ["createUser", "editUser", "createDepartment", "createDepartment", "editDepartment", "createMateriality"];
+    const allowedModalId = ["createIndustry", "editIndustry", "createUser", "editUser", "createDepartment", "createDepartment", "editDepartment", "createMateriality"];
     if(allowedModalId.includes(data.id)){
       setHomeModal({state: true, id: data.id});
     }

@@ -18,6 +18,13 @@
     "path": "/organization"
   },
   {
+    "id": "industry",
+    "roles": ["superadmin"],
+    "label": "industryGroup.industry",
+    "iconClassname": "fas fa-industry",
+    "path": "/industry"
+  },
+  {
     "id": "admin",
     "roles": ["superadmin"],
     "label": "adminGroup.admin",

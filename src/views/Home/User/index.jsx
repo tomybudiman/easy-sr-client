@@ -38,6 +38,7 @@ class User extends Component {
     super(props);
     this.tableRef = null;
     this.authRole = store.getState().reducerAuth.userTokenData.roles[0];
+    this.data = this.data.bind(this);
   }
   data(query){
     return new Promise(resolve => {
@@ -133,7 +134,7 @@ class User extends Component {
       <React.Fragment>
         <PageRouteHeader>{this.getPageHeaderTitle()}</PageRouteHeader>
         <MaterialTable
-          data={q => this.data(q)}
+          data={this.data}
           style={tableStyle}
           columns={tableColumns}
           options={tableOptions}

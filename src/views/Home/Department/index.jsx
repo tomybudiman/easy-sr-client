@@ -101,7 +101,7 @@ export const CreateDepartmentModal = ({onClickClose}) => {
     const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
     if(isFormValid){
       createDepartment({name: formField.departmentName.value}).then(res => {
-        if(res.name === formField.departmentName.value){
+        if(res.createdAt){
           onClickClose({type: "createDepartment", uid: uuid()});
         }
       });
@@ -154,7 +154,7 @@ export const EditDepartmentModal = ({onClickClose}) => {
     if(target.name === "departmentName"){
       setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
     }
-  }
+  };
   const checkFormThenSubmit = () => {
     const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
       return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
