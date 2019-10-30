@@ -1,3 +1,4 @@
 [
-  {"label": "settingsGroup.settings", "path": "/dashboard/settings", "iconClassname": "fas fa-users-cog", "roles": [true]}
+  {"label": "settingsGroup.settings", "path": "/dashboard/settings", "iconClassname": "fas fa-users-cog", "roles": [true]},
+  {"label": "surveyGroup.survey", "path": "/dashboard/survey/form", "iconClassname": "fas fa-poll", "roles": ["org_surveyor"]}
 ]

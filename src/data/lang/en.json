@@ -3,6 +3,7 @@
     "success": "Success"
   },
   "warning": {
+    "verifyAction": "Verify Action",
     "networkError": "Network error",
     "sessionTimeout": "Session timeout",
     "emailInvalid": "Invalid email address",
@@ -16,6 +17,7 @@
     "save": "Save",
     "create": "Create",
     "add": "Add",
+    "remove": "Remove",
     "logout": "Logout",
     "locked": "Locked",
     "active": "Active",
@@ -31,6 +33,12 @@
   },
   "organizationGroup": {
     "organization": "Organization"
+  },
+  "industryGroup": {
+    "industry": "Industry",
+    "editIndustry": "Edit Industry",
+    "industryName": "Industry Name",
+    "createNewIndustry": "Create New Industry"
   },
   "userGroup": {
     "user": "User",
@@ -52,6 +60,7 @@
     "department": "Department",
     "list": "List",
     "createNew": "Create New",
+    "editDepartment": "Edit Departement",
     "createNewDepartment": "Create New Department"
   },
   "surveyGroup": {

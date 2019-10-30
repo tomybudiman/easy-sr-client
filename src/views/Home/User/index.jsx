@@ -37,12 +37,24 @@ class User extends Component {
   constructor(props){
     super(props);
     this.tableRef = null;
+    this.authRole = store.getState().reducerAuth.userTokenData.roles[0];
+    this.data = this.data.bind(this);
   }
   data(query){
     return new Promise(resolve => {
       getUsers().then(res => {
+        const filterUsers = res.rows.filter(({roles}) => {
+          switch(this.authRole){
+            case "superadmin":
+              return roles.map(({name}) => name).includes("org_admin");
+            case "org_admin":
+              return roles.map(({name}) => name).includes("org_surveyor");
+            default:
+              return [];
+          }
+        });
         resolve({
-          data: res.rows.map(each => {
+          data: filterUsers.map(each => {
             return {
               raw: each,
               formatted: {
@@ -60,6 +72,15 @@ class User extends Component {
       });
     });
   };
+  getPageHeaderTitle(){
+    switch(this.authRole){
+      case "superadmin":
+        return <Translator id="adminGroup.admin"/>
+      case "org_admin":
+      default:
+        return <Translator id="userGroup.user"/>
+    }
+  }
   // Component Lifecycle
   componentDidUpdate(prevProps){
     if(get(prevProps, "prevEvent.uid") !== get(this.props, "prevEvent.uid")){
@@ -90,16 +111,14 @@ class User extends Component {
       {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => {
         return moment(formatted.createdAt).format("DD MMMM YYYY HH:mm");
       }},
-      {title: "Actions", render: ({raw}) => {
-        return(
+      {title: "Action", render: ({raw}) => (
           <Button className="datatable-action-button" onClick={e => {
             store.dispatch(setSelectedUserEdit(raw));
             onClickEvent({e, data: {id: "editUser"}});
           }}>
             <i className="fas fa-user-cog"/>
           </Button>
-        )
-      }, filtering: false, sorting: false}
+      ), filtering: false, sorting: false}
     ];
     const tableComponents = {
       Toolbar: () => (
@@ -113,11 +132,9 @@ class User extends Component {
     // return null
     return(
       <React.Fragment>
-        <PageRouteHeader>
-          <Translator id="userGroup.user"/>
-        </PageRouteHeader>
+        <PageRouteHeader>{this.getPageHeaderTitle()}</PageRouteHeader>
         <MaterialTable
-          data={q => this.data(q)}
+          data={this.data}
           style={tableStyle}
           columns={tableColumns}
           options={tableOptions}
@@ -162,7 +179,7 @@ export const EditUserModal = ({onClickClose}) => {
     ...prevObj, [name]: {label: get(prevObj, `[${name}].label`) || "Superadmin", value: true}
   }), {
     org_admin: {label: "Admin", value: false},
-    org_developer: {label: "Developer", value: false},
+    org_surveyor: {label: "Surveyor", value: false},
     org_viewer: {label: "Viewer", value: false}
   });
   const [isUserLocked, setUserLock] = useState(is_locked);
@@ -267,14 +284,20 @@ export const EditUserModal = ({onClickClose}) => {
 
 export const CreateUserModal = ({onClickClose}) => {
   const routeType = history.location.pathname.match(/\/[^\/]+$/)[0].slice(1);
+  const authRole = get(store.getState(), "reducerAuth.userTokenData.roles[0]");
+  const basicRoleInput = [
+    {id: "org_admin", label: "Admin", value: false, scope: ["superadmin"]},
+    {id: "org_surveyor", label: "Surveyor", value: false, scope: ["org_admin"]},
+    {id: "org_viewer", label: "Viewer", value: false, scope: ["org_admin"]}
+  ].filter(({scope}) => scope.includes(authRole)).reduce((prevObj, itrVal) => {
+    const duplicateObj = {...itrVal};
+    delete duplicateObj.id;
+    return {...prevObj, [itrVal.id]: duplicateObj}
+  }, {});
   // Overide Value
   const initialUserRole = routeType === "admin" ? ["org_admin"] : null;
   // State Management
-  const [roleInput, setRoleInput] = useState({
-    org_admin: {label: "Admin", value: false},
-    org_developer: {label: "Developer", value: false},
-    org_viewer: {label: "Viewer", value: false}
-  });
+  const [roleInput, setRoleInput] = useState(basicRoleInput);
   const [formStatus, updateFormStatus] = useState({
     fullname: {value: null, invalid: false},
     email: {value: null, invalid: false},
@@ -330,7 +353,6 @@ export const CreateUserModal = ({onClickClose}) => {
       };
       return isEmpty(tempFormStatus[eachKey].value) || tempFormStatus[eachKey].invalid
     }).length === 0;
-    updateFormStatus(tempFormStatus);
     if(isFormValid){
       setButtonDisabled(true);
       try{
@@ -350,6 +372,8 @@ export const CreateUserModal = ({onClickClose}) => {
       }catch(err){
         // console.log(err);
       }
+    }else{
+      updateFormStatus(tempFormStatus);
     }
   };
   return(

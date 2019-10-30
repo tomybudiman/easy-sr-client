@@ -3,6 +3,7 @@
     "success": "Berhasil"
   },
   "warning": {
+    "verifyAction": "Verifikasi Aksi",
     "networkError": "Kesalahan jaringan",
     "sessionTimeout": "Sesi berakhir",
     "emailInvalid": "Alamat surel tidak berlaku",
@@ -16,6 +17,7 @@
     "save": "Simpan",
     "create": "Buat",
     "add": "Tambah",
+    "remove": "Hapus",
     "logout": "Keluar",
     "locked": "Terkunci",
     "active": "Aktif",
@@ -31,6 +33,12 @@
   },
   "organizationGroup": {
     "organization": "Organisasi"
+  },
+  "industryGroup": {
+    "industry": "Industri",
+    "editIndustry": "Ubah Industri",
+    "industryName": "Nama Industri",
+    "createNewIndustry": "Buat Industri Baru"
   },
   "userGroup": {
     "user": "Pengguna",
@@ -48,11 +56,12 @@
   "departmentGroup": {
     "departmentId": "ID Departemen",
     "departmentName": "Nama Departemen",
-    "selectDepartment": "Pilih departemen",
+    "selectDepartment": "Pilih Departemen",
     "department": "Departemen",
     "list": "Daftar",
     "createNew": "Buat Baru",
-    "createNewDepartment": "Buat Department Baru"
+    "editDepartment": "Ubah Departemen",
+    "createNewDepartment": "Buat Departmen Baru"
   },
   "surveyGroup": {
     "survey": "Survei",

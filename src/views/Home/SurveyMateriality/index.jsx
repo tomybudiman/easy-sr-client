@@ -42,6 +42,10 @@ const Materiality = ({onClickEvent}) => {
     )
   };
   const data = query => {
+    return new Promise(resolve => {
+      getSurveys().then(res => {
+      });
+    });
   };
   return(
     <Fragment>

@@ -1,7 +1,9 @@
 @import "../../assets/style/variables";
 @import "SurveyMateriality/index";
 @import "Department/index";
+@import "SurveyForm/index";
 @import "Settings/index";
+@import "Industry/index";
 @import "User/index";
 
 $sidebarChildItemHeight: 48px;
@@ -208,6 +210,7 @@ $sidebarChildItemHeight: 48px;
 		height: calc(100% - 64px);
 		.body-column-content {
 			flex-grow: 1;
+			@include survey-container;
 			@include settings-container;
 		}
 	}
