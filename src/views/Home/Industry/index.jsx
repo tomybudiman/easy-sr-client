@@ -18,22 +18,28 @@ export const CreateIndustryModal = ({onClickClose}) => {
   const [formField, setFormField] = useState({
     industryName: {value: "", invalid: false}
   });
+  const [mainButtonDisabled, setButtonDisabled] = useState(false);
   const updateFormField = ({target}) => {
     if(Object.keys(formField).includes(target.name)){
       setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
     }
   };
-  const checkFormThenSubmit = () => {
+  const checkFormThenSubmit = async () => {
     const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
       return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
     }, {});
     const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
     if(isFormValid){
-      createIndustry({name: formField.industryName.value}).then(res => {
-        if(res.createdAt){
+      setButtonDisabled(true);
+      try{
+        const awaitCreateIndustry = await createIndustry({name: formField.industryName.value});
+        if(awaitCreateIndustry.createdAt){
           onClickClose({type: "createIndustry", uid: uuid()});
         }
-      });
+      }catch(err){
+        // console.error(err);
+        setButtonDisabled(false);
+      }
     }else{
       setFormField(newFormField);
     }
@@ -64,7 +70,10 @@ export const CreateIndustryModal = ({onClickClose}) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <ButtonShards className="custom-button" onClick={() => checkFormThenSubmit()}>
+        <ButtonShards
+          className="custom-button"
+          disabled={mainButtonDisabled}
+          onClick={() => checkFormThenSubmit()}>
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>
@@ -78,25 +87,31 @@ export const EditIndustryModal = ({onClickClose}) => {
   const [formField, setFormField] = useState({
     industryName: {value: get(selectedIndustryEdit, "name") || null, invalid: false}
   });
+  const [mainButtonDisabled, setButtonDisabled] = useState(false);
   // Methods
   const onChangeHandler = ({target}) => {
     if(target.name === "industryName"){
       setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
     }
   };
-  const checkFormThenSubmit = () => {
+  const checkFormThenSubmit = async () => {
     const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
       return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
     }, {});
     const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
     if(isFormValid){
-      updateIndustry({
-        name: newFormField.industryName.value
-      }, selectedIndustryEdit.id).then(res => {
-        if(res.updatedAt){
+      setButtonDisabled(true);
+      try{
+        const awaitUpdateIndustry = await updateIndustry({
+          name: newFormField.industryName.value
+        }, selectedIndustryEdit.id);
+        if(awaitUpdateIndustry.updatedAt){
           onClickClose({type: "editIndustry", uid: uuid()});
         }
-      });
+      }catch(err){
+        // console.error(err);
+        setButtonDisabled(false);
+      }
     }else{
       setFormField(newFormField);
     }
@@ -142,7 +157,10 @@ export const EditIndustryModal = ({onClickClose}) => {
         <ButtonShards theme="danger" className="custom-button" onClick={deleteIndustryHandler}>
           {verifyDelete ? <Translator id="warning.verifyAction"/> : <Translator id="commonGroup.remove"/>}
         </ButtonShards>
-        <ButtonShards className="custom-button" onClick={checkFormThenSubmit}>
+        <ButtonShards
+          className="custom-button"
+          disabled={mainButtonDisabled}
+          onClick={checkFormThenSubmit}>
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>

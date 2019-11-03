@@ -85,7 +85,7 @@ const HomeModal = ({homeModal, toggleModal}) => {
         const {EditDepartmentModal} = require("./Department");
         return <EditDepartmentModal onClickClose={toggleModal}/>;
       case "createMateriality":
-        setModalSize("lg");
+        setModalSize("md");
         const {CreateMaterialityModal} = require("./SurveyMateriality");
         return <CreateMaterialityModal onClickClose={toggleModal}/>;
       default:

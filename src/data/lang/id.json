@@ -17,6 +17,7 @@
     "save": "Simpan",
     "create": "Buat",
     "add": "Tambah",
+    "empty": "Kosong",
     "remove": "Hapus",
     "logout": "Keluar",
     "locked": "Terkunci",
@@ -36,6 +37,7 @@
   },
   "industryGroup": {
     "industry": "Industri",
+    "selectIndustry": "Pilih Industri",
     "editIndustry": "Ubah Industri",
     "industryName": "Nama Industri",
     "createNewIndustry": "Buat Industri Baru"
@@ -65,6 +67,7 @@
   },
   "surveyGroup": {
     "survey": "Survei",
+    "surveyName": "Nama Survey",
     "materiality": "Materiality",
     "disclosure": "Disclosure",
     "createMateriality": "Buat Materiality",

@@ -88,23 +88,29 @@ export const CreateDepartmentModal = ({onClickClose}) => {
   const [formField, setFormField] = useState({
     departmentName: {value: "", invalid: false}
   });
+  const [mainButtonDisabled, setButtonDisabled] = useState(false);
   const updateFormField = ({target}) => {
     if(Object.keys(formField).includes(target.name)){
       // const value = target.value.trim().replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s/g, "_").toLowerCase();
       setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
     }
   };
-  const checkFormThenSubmit = () => {
+  const checkFormThenSubmit = async () => {
     const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
       return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
     }, {});
     const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
     if(isFormValid){
-      createDepartment({name: formField.departmentName.value}).then(res => {
-        if(res.createdAt){
+      setButtonDisabled(true);
+      try{
+        const awaitCreateDepartment = createDepartment({name: formField.departmentName.value});
+        if(awaitCreateDepartment.createdAt){
           onClickClose({type: "createDepartment", uid: uuid()});
         }
-      });
+      }catch(err){
+        // console.error(err);
+        setButtonDisabled(false);
+      }
     }else{
       setFormField(newFormField);
     }
@@ -135,7 +141,10 @@ export const CreateDepartmentModal = ({onClickClose}) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <ButtonShards className="custom-button" onClick={() => checkFormThenSubmit()}>
+        <ButtonShards
+          className="custom-button"
+          disabled={mainButtonDisabled}
+          onClick={() => checkFormThenSubmit()}>
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>
@@ -149,25 +158,31 @@ export const EditDepartmentModal = ({onClickClose}) => {
   const [formField, setFormField] = useState({
     departmentName: {value: get(selectedDepartmentEdit, "name") || null, invalid: false}
   });
+  const [mainButtonDisabled, setButtonDisabled] = useState(false);
   // Methods
   const onChangeHandler = ({target}) => {
     if(target.name === "departmentName"){
       setFormField({...formField, [target.name]: {value: target.value, invalid: isEmpty(target.value)}});
     }
   };
-  const checkFormThenSubmit = () => {
+  const checkFormThenSubmit = async () => {
     const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
       return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
     }, {});
     const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
     if(isFormValid){
-      updateDepartment({
-        name: newFormField.departmentName.value
-      }, selectedDepartmentEdit.id).then(res => {
-        if(res.updatedAt){
+      setButtonDisabled(true);
+      try{
+        const awaitUpdateDepartment = await updateDepartment({
+          name: newFormField.departmentName.value
+        }, selectedDepartmentEdit.id);
+        if(awaitUpdateDepartment.updatedAt){
           onClickClose({type: "editDepartment", uid: uuid()});
         }
-      });
+      }catch(err){
+        // console.error(err);
+        setButtonDisabled(false);
+      }
     }else{
       setFormField(newFormField);
     }
@@ -213,7 +228,10 @@ export const EditDepartmentModal = ({onClickClose}) => {
         <ButtonShards theme="danger" className="custom-button" onClick={deleteDepartmentHandler}>
           {verifyDelete ? <Translator id="warning.verifyAction"/> : <Translator id="commonGroup.remove"/>}
         </ButtonShards>
-        <ButtonShards className="custom-button" onClick={checkFormThenSubmit}>
+        <ButtonShards
+          className="custom-button"
+          disabled={mainButtonDisabled}
+          onClick={checkFormThenSubmit}>
           <Translator id="commonGroup.save"/>
         </ButtonShards>
       </ModalFooter>

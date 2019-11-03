@@ -1,27 +1,142 @@
-import React, {Fragment} from "react";
-import {ModalHeader, ModalBody, ModalFooter} from "shards-react";
-import MaterialTable, {MTableToolbar} from "material-table";
+import React, {Component, Fragment} from "react";
+import {
+  ModalHeader, ModalBody, ModalFooter, FormGroup, FormInput, FormSelect, Button as ButtonShards, FormFeedback
+} from "shards-react";
 import Button from "@material-ui/core/Button";
+import MaterialTable from "material-table";
+import {isEmpty, get} from "lodash";
 import uuid from "uuidv4";
 
-import {getSurveys} from "./fetch";
+import {getIndustry} from "../Industry/fetch";
+import {getSurveys, startSurvey} from "./fetch";
 import Translator from "../../../components/Translator";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
-export const CreateMaterialityModal = ({onClickClose}) => {
-  return(
-    <React.Fragment>
-      <ModalHeader className="home-modal-header" tag="div">
-        <Translator id="surveyGroup.createMateriality"/>
-        <button className="close-button" onClick={() => onClickClose({type: "createMateriality", uid: uuid()})}>
-          <i className="fas fa-times"/>
-        </button>
-      </ModalHeader>
-      <ModalBody></ModalBody>
-      <ModalFooter></ModalFooter>
-    </React.Fragment>
-  )
-};
+export class CreateMaterialityModal extends Component {
+  constructor(props){
+    super(props);
+    this.mounted = false;
+    this.state = {
+      industryData: null,
+      buttonDisabled: false,
+      formField: {
+        surveyName: {value: null, invalid: false},
+        industryId: {value: null, invalid: false}
+      }
+    };
+    this.onChangeHandle = this.onChangeHandle.bind(this);
+    this.checkFormThenSubmit = this.checkFormThenSubmit.bind(this);
+  }
+  // Methods
+  onChangeHandle({target}){
+    if(Object.keys(this.state.formField).includes(target.name)){
+      const objValue = target.name === "industryId"
+        ? {value: target.value === "default" ? null : target.value, invalid: isEmpty(target.value === "default" ? null : target.value)}
+        : {value: target.value, invalid: isEmpty(target.value)};
+      this.setState({formField: {
+        ...this.state.formField, [target.name]: objValue
+      }});
+    }
+  }
+  async checkFormThenSubmit(){
+    const {formField} = this.state;
+    const {onClickClose} = this.props;
+    const newFormField = Object.keys(formField).reduce((prevObj, itrVal) => {
+      return {...prevObj, [itrVal]: {...formField[itrVal], invalid: isEmpty(formField[itrVal].value)}}
+    }, {});
+    const isFormValid = Object.values(newFormField).filter(({value, invalid}) => isEmpty(value) || invalid).length === 0;
+    if(isFormValid){
+      this.setState({buttonDisabled: true});
+      try{
+        const awaitStartSurvey = await startSurvey({
+          title: formField.surveyName.value,
+          industry_id: formField.industryId.value
+        });
+        if(get(awaitStartSurvey, "survey.createdAt")){
+          onClickClose({type: "startSurvey", uid: uuid()});
+        }
+      }catch(err){
+        // console.error(err);
+        this.setState({buttonDisabled: false});
+      }
+    }else{
+      this.setState({formField: newFormField});
+    }
+  }
+  // Component lifecycle
+  componentDidMount(){
+    this.mounted = true;
+    getIndustry().then(({rows}) => {
+      if(this.mounted){
+        this.setState({industryData: rows})
+      }
+    });
+  }
+  componentWillUnmount(){
+    this.mounted = false;
+  }
+  render(){
+    const {onClickClose} = this.props;
+    return(
+      <React.Fragment>
+        <ModalHeader className="home-modal-header" tag="div">
+          <Translator id="surveyGroup.createMateriality"/>
+          <button className="close-button" onClick={() => onClickClose({type: "createMateriality", uid: uuid()})}>
+            <i className="fas fa-times"/>
+          </button>
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <label htmlFor="input-new-materiality-survey-name">
+              <Translator id="surveyGroup.surveyName"/>
+            </label>
+            <FormInput
+              name="surveyName"
+              onChange={this.onChangeHandle}
+              id="input-new-materiality-survey-name"
+              invalid={this.state.formField.surveyName.invalid}/>
+            {this.state.formField.surveyName.invalid ? (
+              <FormFeedback tag="p" valid={false}>
+                <Translator id="warning.fieldEmptyInvalid"/>
+              </FormFeedback>
+            ) : null}
+          </FormGroup>
+          <FormGroup>
+            <label htmlFor="input-new-materiality-survey-industry">
+              <Translator id="industryGroup.industry"/>
+            </label>
+            <FormSelect
+              name="industryId"
+              onChange={this.onChangeHandle}
+              id="input-new-materiality-survey-industry"
+              invalid={this.state.formField.industryId.invalid}>
+              {this.state.industryData ? (
+                <React.Fragment>
+                  <option value={"default"}>Select Industry</option>
+                  {this.state.industryData.map((each, i) => (
+                    <option value={each.id} key={i}>{each.name}</option>
+                  ))}
+                </React.Fragment>
+              ) : (
+                <option><Translator id="commonGroup.empty"/></option>
+              )}
+            </FormSelect>
+            {this.state.formField.industryId.invalid ? (
+              <FormFeedback tag="p" valid={false}>
+                <Translator id="warning.fieldEmptyInvalid"/>
+              </FormFeedback>
+            ) : null}
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <ButtonShards className="custom-button" disabled={this.state.buttonDisabled} onClick={this.checkFormThenSubmit}>
+            <Translator id="commonGroup.save"/>
+          </ButtonShards>
+        </ModalFooter>
+      </React.Fragment>
+    )
+  }
+}
 
 const Materiality = ({onClickEvent}) => {
   const tableStyle = {

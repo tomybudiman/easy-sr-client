@@ -371,6 +371,7 @@ export const CreateUserModal = ({onClickClose}) => {
         }
       }catch(err){
         // console.log(err);
+        setButtonDisabled(false);
       }
     }else{
       updateFormStatus(tempFormStatus);
