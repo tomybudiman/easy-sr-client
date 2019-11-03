@@ -5,11 +5,12 @@ import {
 import Button from "@material-ui/core/Button";
 import MaterialTable from "material-table";
 import {isEmpty, get} from "lodash";
+import moment from "moment";
 import uuid from "uuidv4";
 
 import {getIndustry} from "../Industry/fetch";
-import {getSurveys, startSurvey} from "./fetch";
 import Translator from "../../../components/Translator";
+import {getSurveys, startSurvey, endSurvey} from "./fetch";
 import PageRouteHeader from "../../../components/PageRouteHeader";
 
 export class CreateMaterialityModal extends Component {
@@ -138,41 +139,86 @@ export class CreateMaterialityModal extends Component {
   }
 }
 
-const Materiality = ({onClickEvent}) => {
-  const tableStyle = {
-    marginTop: "16px",
-    boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
-  };
-  const tableOptions = {
-    showTitle: false,
-    search: false
-  };
-  const tableComponents = {
-    Toolbar: () => (
-      <div className="survey-datatable-toolbar">
-        <Button size="small" onClick={e => onClickEvent({e, data: {id: "createMateriality"}})}>
-          <Translator id="surveyGroup.createMateriality"/>
-        </Button>
-      </div>
-    )
-  };
-  const data = query => {
+class Materiality extends Component {
+  constructor(props){
+    super(props);
+    this.tableRef = null;
+    this.data = this.data.bind(this);
+  }
+  // Methods
+  async endSurveyHandle(raw){
+    const awaitEndSurvey = await endSurvey(raw.id);
+    if(awaitEndSurvey.success){
+      setTimeout(this.tableRef.onQueryChange, 0);
+    }
+  }
+  data(query){
     return new Promise(resolve => {
       getSurveys().then(res => {
+        resolve({
+          data: res.rows.map(each => ({
+            raw: each,
+            formatted: {
+              surveyName: each.title,
+              status: each.status,
+              createdAt: each.createdAt
+            }
+          })),
+          page: res.page - 1,
+          totalCount: res.count
+        })
       });
     });
   };
-  return(
-    <Fragment>
-      <PageRouteHeader>
-        <Translator id="surveyGroup.materialitySurvey"/>
-      </PageRouteHeader>
-      <MaterialTable
-        style={tableStyle}
-        options={tableOptions}
-        components={tableComponents}/>
-    </Fragment>
-  )
-};
+  // Component Lifecycle
+  render(){
+    const {onClickEvent} = this.props;
+    const tableStyle = {
+      marginTop: "16px",
+      boxShadow: "3px 0 30px rgba(17, 31, 93, 0.08), 2px 0 5px rgba(27, 27, 43, 0.09)"
+    };
+    const tableOptions = {
+      showTitle: false,
+      search: false
+    };
+    const tableColumns = [
+      {title: "Survey Name", filtering: false, sorting: false, render: ({formatted}) => formatted.surveyName},
+      {title: "Status", filtering: false, sorting: false, render: ({formatted}) => formatted.status},
+      {title: "Created At", filtering: false, sorting: false, render: ({formatted}) => {
+          return moment(formatted.createdAt).format("DD MMMM YYYY HH:mm");
+        }},
+      {title: "Action", filtering: false, sorting: false, render: ({raw}) => {
+          return(
+            <Button className="datatable-action-button" title="End Survey" onClick={() => this.endSurveyHandle(raw)}>
+              <i className="fas fa-stop-circle"/>
+            </Button>
+          )
+        }}
+    ];
+    const tableComponents = {
+      Toolbar: () => (
+        <div className="survey-datatable-toolbar">
+          <Button size="small" onClick={e => onClickEvent({e, data: {id: "createMateriality"}})}>
+            <Translator id="surveyGroup.createMateriality"/>
+          </Button>
+        </div>
+      )
+    };
+    return(
+      <Fragment>
+        <PageRouteHeader>
+          <Translator id="surveyGroup.materialitySurvey"/>
+        </PageRouteHeader>
+        <MaterialTable
+          data={this.data}
+          style={tableStyle}
+          columns={tableColumns}
+          options={tableOptions}
+          components={tableComponents}
+          tableRef={e => this.tableRef = e}/>
+      </Fragment>
+    )
+  }
+}
 
 export default Materiality

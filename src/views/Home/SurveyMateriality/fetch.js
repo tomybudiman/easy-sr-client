@@ -32,3 +32,16 @@ export const startSurvey = payload => {
     }).catch(err => handleError(err, reject));
   });
 };
+
+export const endSurvey = id => {
+  const {authToken} = store.getState().reducerAuth;
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "POST",
+      url: `${process.env.REACT_APP_API_HOST}/survey/${id}/end`,
+      headers: {"Authorization": `Bearer ${authToken}`}
+    }).then(({data}) => {
+      resolve(data);
+    }).catch(err => handleError(err, reject));
+  });
+};

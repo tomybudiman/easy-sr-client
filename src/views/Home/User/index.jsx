@@ -54,18 +54,16 @@ class User extends Component {
           }
         });
         resolve({
-          data: filterUsers.map(each => {
-            return {
-              raw: each,
-              formatted: {
-                fullname: each.fullname,
-                email: each.email,
-                roles: each.roles.map(eachRole => getRoleAlias(eachRole.name)).join(", "),
-                department: "Whatever",
-                createdAt: each.createdAt
-              }
-            };
-          }),
+          data: filterUsers.map(each => ({
+            raw: each,
+            formatted: {
+              fullname: each.fullname,
+              email: each.email,
+              roles: each.roles.map(eachRole => getRoleAlias(eachRole.name)).join(", "),
+              department: "Whatever",
+              createdAt: each.createdAt
+            }
+          })),
           page: res.page - 1,
           totalCount: res.count
         });
